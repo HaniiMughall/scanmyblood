@@ -47,7 +47,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
       name: name,
       email: email,
       password: pass,
-      role: "user",
+      role: "user",   
     );
 
     await DatabaseService.instance.addUser(user);
