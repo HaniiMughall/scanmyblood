@@ -4,7 +4,6 @@ import 'compatibility_page.dart';
 import 'find_donor_page.dart';
 import 'emergency_request_page.dart';
 import 'donate_flow/verify_donation_page.dart';
-import 'predict_page.dart'; // <-- AI Predict Page import
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key});
@@ -12,7 +11,7 @@ class HomePage extends StatelessWidget {
   Widget _buildGlassButton(
       BuildContext context, String text, IconData icon, VoidCallback onTap) {
     return SizedBox(
-      height: 100,
+      height: 100, // Fixed height for uniform buttons
       child: ElevatedButton.icon(
         style: ElevatedButton.styleFrom(
           backgroundColor: Colors.white.withOpacity(0.9),
@@ -157,25 +156,6 @@ class HomePage extends StatelessWidget {
                             builder: (_) => const VerifyDonationPage()),
                       );
                     }),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 20),
-              // Third row: AI Predict Blood Group
-              Row(
-                children: [
-                  Expanded(
-                    child: _buildGlassButton(
-                        context, "Predict Blood Group", Icons.analytics, () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (_) => const PredictPage()),
-                      );
-                    }),
-                  ),
-                  const SizedBox(width: 20),
-                  Expanded(
-                    child: Container(), // Placeholder for layout symmetry
                   ),
                 ],
               ),

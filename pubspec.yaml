@@ -11,10 +11,7 @@ dependencies:
 
   flutter:
     sdk: flutter
-  tflite_flutter: ^0.11.0
-  connectivity_plus: ^6.1.5
-  image_picker: ^1.2.0
-  image: 3.3.0
+  image_picker: ^1.1.2
   url_launcher: ^6.3.0
   share_plus: ^11.0.0
   sqflite: ^2.3.3
@@ -22,7 +19,6 @@ dependencies:
   geolocator: ^14.0.2
   uuid: ^4.5.1
   hive_flutter: ^1.1.0
-  http: ^1.1.0
   shared_preferences: ^2.3.3
   flutter_localizations:
     sdk: flutter
@@ -47,4 +43,3 @@ flutter:
     - assets/lang/logo.png
     - assets/lang/search_donor.png
     - assets/lang/badge.png
-    - assets/model.tflite

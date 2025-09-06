@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:ui';
 import 'home_page.dart';
-import '../gamification/screens/gamification_screen.dart';
+import 'package:scanmyblood/gamification/screens/gamification_screen.dart';
 import 'profile_page.dart';
 import 'history_page.dart';
 import 'admin_panel_page.dart';

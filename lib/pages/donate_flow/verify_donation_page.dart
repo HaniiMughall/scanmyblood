@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import '../../gamification/providers/gamification_provider.dart';
 import 'dart:io';
-import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import '/utils/global_data.dart';
 import '/models/donor.dart';
 import 'dart:ui';
+import 'package:image_picker/image_picker.dart';
 
 class VerifyDonationPage extends StatefulWidget {
   const VerifyDonationPage({super.key});
@@ -25,10 +25,19 @@ class _VerifyDonationPageState extends State<VerifyDonationPage> {
   File? _proofImage;
   bool otpVerified = false;
 
+  /// Pick image function (FIXED)
   Future<void> _pickImage() async {
-    final picked = await ImagePicker().pickImage(source: ImageSource.gallery);
-    if (picked != null) {
-      setState(() => _proofImage = File(picked.path));
+    final picker = ImagePicker();
+    final pickedFile =
+        await picker.pickImage(source: ImageSource.gallery, imageQuality: 70);
+
+    if (pickedFile != null) {
+      setState(() {
+        _proofImage = File(pickedFile.path);
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("✅ Proof image selected")),
+      );
     }
   }
 
