@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'screens/splash_screen.dart';
+import 'screens/login_screen.dart';
+import 'screens/onboarding_screen.dart';
 import 'pages/main_page.dart';
 
 void main() {
@@ -38,12 +41,21 @@ class _BloodAppState extends State<BloodApp> {
       theme: ThemeData(primarySwatch: Colors.red),
       darkTheme: ThemeData.dark(),
       themeMode: _themeMode,
-      home: MainPage(
-        toggleTheme: _toggleTheme,
-        toggleLanguage: _toggleLanguage,
-        isDarkMode: _themeMode == ThemeMode.dark,
-        isEnglish: _isEnglish,
-      ),
+
+      // 👇 first screen: Splash
+      initialRoute: '/',
+
+      routes: {
+        '/': (context) => const SplashScreen(), // splash first
+        '/login': (context) => const LoginScreen(), // after splash
+        '/onboarding': (context) => const OnboardingScreen(), // after login
+        '/home': (context) => MainPage( // home page
+              toggleTheme: _toggleTheme,
+              toggleLanguage: _toggleLanguage,
+              isDarkMode: _themeMode == ThemeMode.dark,
+              isEnglish: _isEnglish,
+            ),
+      },
     );
   }
 }

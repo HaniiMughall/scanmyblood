@@ -27,22 +27,28 @@ class _LoginScreenState extends State<LoginScreen> {
   Future<void> _login() async {
     final email = emailCtrl.text.trim();
     final pass = passCtrl.text.trim();
+
     if (email.isEmpty || pass.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text("Please fill email and password")));
       return;
     }
+
     setState(() => _loading = true);
+
     final ok = await DatabaseService.instance.validateUser(email, pass);
+
     setState(() => _loading = false);
+
     if (!ok) {
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-          content:
-              Text("Account not found or wrong password. Please sign up.")));
+          content: Text("Apka koi account nahi bana hua, pehle Sign up karein")));
       return;
     }
+
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('logged_in_email', email);
+
     Navigator.pushReplacement(
         context, MaterialPageRoute(builder: (_) => const OnboardingScreen()));
   }

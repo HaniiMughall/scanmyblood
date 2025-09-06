@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
 import 'package:scanmyblood/services/database_service.dart';
 import '../models/user.dart';
+import 'login_screen.dart';
 import 'dart:ui';
 
 class SignUpScreen extends StatefulWidget {
@@ -57,7 +58,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
       const SnackBar(content: Text("Signup successful. Please login.")),
     );
 
-    Navigator.pop(context);
+    // Signup ke baad direct login page par bhejna
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (_) => const LoginScreen()),
+    );
   }
 
   @override
