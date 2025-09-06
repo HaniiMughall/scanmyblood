@@ -22,13 +22,36 @@ class BloodRequest extends HiveObject {
   RequestStatus status;
 
   BloodRequest({
+    required this.id,
     required this.requesterName,
     required this.bloodGroup,
     required this.city,
     this.contact,
     this.status = RequestStatus.pending,
-    required this.id,
   });
+
+  /// ✅ Convert to Map (for database or API)
+  Map<String, dynamic> toJson() => {
+        "id": id,
+        "requesterName": requesterName,
+        "bloodGroup": bloodGroup,
+        "city": city,
+        "contact": contact,
+        "status": status.name, // enum ko string me save karenge
+      };
+
+  /// ✅ Convert back from Map
+  factory BloodRequest.fromJson(Map<String, dynamic> json) => BloodRequest(
+        id: json["id"],
+        requesterName: json["requesterName"],
+        bloodGroup: json["bloodGroup"],
+        city: json["city"],
+        contact: json["contact"],
+        status: RequestStatus.values.firstWhere(
+          (e) => e.name == json["status"],
+          orElse: () => RequestStatus.pending,
+        ),
+      );
 }
 
 @HiveType(typeId: 3)

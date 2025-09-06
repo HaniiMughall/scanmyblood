@@ -17,12 +17,12 @@ class BloodRequestAdapter extends TypeAdapter<BloodRequest> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return BloodRequest(
+      id: fields[0] as String,
       requesterName: fields[1] as String,
       bloodGroup: fields[2] as String,
       city: fields[3] as String,
       contact: fields[4] as String?,
       status: fields[5] as RequestStatus,
-      id: fields[0] as String,
     );
   }
 

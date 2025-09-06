@@ -1,3 +1,5 @@
+import 'package:uuid/uuid.dart';
+
 import '../models/donor.dart';
 import '../models/blood_request.dart';
 import '../models/user.dart';
@@ -8,6 +10,7 @@ User? currentUser;
 /// Dummy donors
 List<Donor> donors = [
   Donor(
+    id: Uuid().v4(),
     name: "Ali Khan",
     bloodGroup: "A+",
     city: "Lahore",
@@ -16,6 +19,7 @@ List<Donor> donors = [
     longitude: 74.3587,
   ),
   Donor(
+    id: Uuid().v4(),
     name: "Sara Ahmed",
     bloodGroup: "B+",
     city: "Karachi",
@@ -24,6 +28,7 @@ List<Donor> donors = [
     longitude: 67.0011,
   ),
   Donor(
+    id: Uuid().v4(),
     name: "Usman Malik",
     bloodGroup: "O-",
     city: "Islamabad",

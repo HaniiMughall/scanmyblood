@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'dart:ui';
 import 'home_page.dart';
-import 'package:scanmyblood/gamification/screens/gamification_screen.dart';
+import 'compatibility_page.dart';
+import 'donor_list_page.dart';
 import 'profile_page.dart';
 import 'history_page.dart';
 import 'admin_panel_page.dart';
-import 'setting_page.dart';
+import 'developer_page.dart';
 
 class MainPage extends StatefulWidget {
   final VoidCallback toggleTheme;
@@ -13,7 +13,7 @@ class MainPage extends StatefulWidget {
   final bool isDarkMode;
   final bool isEnglish;
 
-  const MainPage({
+  MainPage({
     super.key,
     required this.toggleTheme,
     required this.toggleLanguage,
@@ -22,119 +22,123 @@ class MainPage extends StatefulWidget {
   });
 
   @override
-  _MainPageState createState() => _MainPageState();
+  State<MainPage> createState() => _MainPageState();
 }
 
 class _MainPageState extends State<MainPage> {
   int _selectedIndex = 0;
 
-  late final List<Widget> _pages = [
-    HomePage(),
-    ProfilePage(),
-    HistoryPage(),
-    AdminPanelPage(),
-    const SettingsPage(),
-  ];
-
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      extendBody: true,
-      backgroundColor: const Color(0xFF8B0000), // Dark red background
-      appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        title: const Text(
-          "Scan My Blood",
-          style: TextStyle(
-              fontWeight: FontWeight.bold,
-              color: Colors.white,
-              letterSpacing: 1.2),
-        ),
-        flexibleSpace: Container(
-          decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              colors: [Color(0xFF8B0000), Colors.black87],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),
-          ),
-        ),
-        iconTheme: const IconThemeData(color: Colors.white),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.brightness_6, color: Colors.white),
-            onPressed: widget.toggleTheme,
-            tooltip: 'Toggle Theme',
-          ),
-          IconButton(
-            icon: const Icon(Icons.language, color: Colors.white),
-            onPressed: widget.toggleLanguage,
-            tooltip: 'Toggle Language',
-          ),
-          IconButton(
-            icon: const Icon(Icons.emoji_events, color: Colors.white),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => GamificationScreen()),
-              );
-            },
-            tooltip: 'Gamification',
-          ),
-        ],
+    final pages = [
+      HomePage(
+        toggleTheme: widget.toggleTheme,
+        toggleLanguage: widget.toggleLanguage,
+        isDarkMode: widget.isDarkMode,
+        isEnglish: widget.isEnglish,
       ),
-      drawer: Drawer(
-        child: Container(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: [Color(0xFF8B0000).withOpacity(0.9), Colors.black87],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),
-          ),
+      CompatibilityPage(myGroup: ""), // default empty
+      const DonorListPage(),
+      const ProfilePage(),
+    ];
+
+    return Container(
+      decoration: const BoxDecoration(
+        gradient: LinearGradient(
+          colors: [Colors.red, Colors.black87],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+      ),
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        appBar: AppBar(
+          title: const Text("Scan My Blood"),
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          centerTitle: true,
+        ),
+        drawer: Drawer(
+          backgroundColor: Colors.black.withOpacity(0.85),
           child: ListView(
             padding: EdgeInsets.zero,
             children: [
               const DrawerHeader(
-                child: Text("Menu",
-                    style: TextStyle(color: Colors.white, fontSize: 28)),
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [Colors.red, Colors.black87],
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                  ),
+                ),
+                child: Text(
+                  "Scan My Blood",
+                  style: TextStyle(color: Colors.white, fontSize: 22),
+                ),
               ),
-              _drawerItem(Icons.admin_panel_settings, "Admin Panel", 3),
-              _drawerItem(Icons.history, "History", 2),
-              _drawerItem(Icons.person, "Profile", 1),
-              _drawerItem(Icons.settings, "Settings", 4),
+              _buildDrawerItem(
+                  Icons.admin_panel_settings,
+                  "Admin Panel",
+                  () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (_) => const AdminPanelPage()))),
+              _buildDrawerItem(
+                  Icons.developer_mode,
+                  "Developer View",
+                  () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (_) => const DeveloperPage()))),
+              _buildDrawerItem(
+                  Icons.history,
+                  "History Panel",
+                  () => Navigator.push(context,
+                      MaterialPageRoute(builder: (_) => const HistoryPage()))),
+              _buildDrawerItem(
+                  Icons.person,
+                  "Profile",
+                  () => Navigator.push(context,
+                      MaterialPageRoute(builder: (_) => const ProfilePage()))),
             ],
           ),
         ),
-      ),
-      body: _pages[_selectedIndex],
-      bottomNavigationBar: ClipRRect(
-        borderRadius: const BorderRadius.only(
-            topLeft: Radius.circular(20), topRight: Radius.circular(20)),
-        child: BackdropFilter(
-          filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
+        body: pages[_selectedIndex],
+        bottomNavigationBar: Container(
+          decoration: BoxDecoration(
+            gradient: const LinearGradient(
+              colors: [Colors.black87, Colors.red],
+              begin: Alignment.bottomLeft,
+              end: Alignment.topRight,
+            ),
+            borderRadius: const BorderRadius.only(
+              topLeft: Radius.circular(25),
+              topRight: Radius.circular(25),
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.4),
+                blurRadius: 10,
+                offset: const Offset(0, -2),
+              ),
+            ],
+          ),
           child: BottomNavigationBar(
-            backgroundColor: Colors.white.withOpacity(0.1),
-            currentIndex: _selectedIndex > 3 ? 0 : _selectedIndex,
-            selectedItemColor: Colors.redAccent,
+            backgroundColor: Colors.transparent,
+            elevation: 0,
+            currentIndex: _selectedIndex,
+            selectedItemColor: Colors.white,
             unselectedItemColor: Colors.white70,
-            onTap: _onItemTapped,
             type: BottomNavigationBarType.fixed,
+            onTap: (i) => setState(() => _selectedIndex = i),
             items: const [
               BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
               BottomNavigationBarItem(
+                  icon: Icon(Icons.bloodtype), label: "Compatibility"),
+              BottomNavigationBarItem(
+                  icon: Icon(Icons.people), label: "Donors"),
+              BottomNavigationBarItem(
                   icon: Icon(Icons.person), label: "Profile"),
-              BottomNavigationBarItem(
-                  icon: Icon(Icons.history), label: "History"),
-              BottomNavigationBarItem(
-                  icon: Icon(Icons.admin_panel_settings), label: "Admin"),
             ],
           ),
         ),
@@ -142,14 +146,11 @@ class _MainPageState extends State<MainPage> {
     );
   }
 
-  Widget _drawerItem(IconData icon, String title, int index) {
+  ListTile _buildDrawerItem(IconData icon, String title, VoidCallback onTap) {
     return ListTile(
       leading: Icon(icon, color: Colors.white),
       title: Text(title, style: const TextStyle(color: Colors.white)),
-      onTap: () {
-        _onItemTapped(index);
-        Navigator.pop(context);
-      },
+      onTap: onTap,
     );
   }
 }

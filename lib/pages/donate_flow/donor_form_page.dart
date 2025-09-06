@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:uuid/uuid.dart';
 import '/services/database_service.dart';
 import '/models/donor.dart';
 import '/utils/global_data.dart';
@@ -25,6 +26,7 @@ class _DonorFormPageState extends State<DonorFormPage> {
       FocusScope.of(context).unfocus();
 
       final donor = Donor(
+        id: Uuid().v4(),
         name: _nameController.text.trim(),
         city: _cityController.text.trim(),
         contact: _contactController.text.trim(),

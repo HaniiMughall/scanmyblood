@@ -1,10 +1,10 @@
 // find_donor_page.dart
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:scanmyblood/models/donor.dart';
-import 'package:scanmyblood/services/database_service.dart';
-import 'package:scanmyblood/services/location_service.dart';
-import 'request_flow/nearby_donors_page.dart';
+import '../../models/donor.dart';
+import '../../services/database_service.dart';
+import '../../services/location_service.dart';
+import '/pages/request_flow/nearby_donors_page.dart';
 import 'dart:ui';
 
 class FindDonorPage extends StatefulWidget {

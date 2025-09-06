@@ -1,11 +1,13 @@
+// verify_donation_page.dart
 import 'package:flutter/material.dart';
-import '../../gamification/providers/gamification_provider.dart';
+import 'package:uuid/uuid.dart';
+import '/gamification/providers/gamification_provider.dart';
 import 'dart:io';
+import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import '/utils/global_data.dart';
 import '/models/donor.dart';
 import 'dart:ui';
-import 'package:image_picker/image_picker.dart';
 
 class VerifyDonationPage extends StatefulWidget {
   const VerifyDonationPage({super.key});
@@ -25,45 +27,55 @@ class _VerifyDonationPageState extends State<VerifyDonationPage> {
   File? _proofImage;
   bool otpVerified = false;
 
-  /// Pick image function (FIXED)
   Future<void> _pickImage() async {
-    final picker = ImagePicker();
-    final pickedFile =
-        await picker.pickImage(source: ImageSource.gallery, imageQuality: 70);
-
-    if (pickedFile != null) {
-      setState(() {
-        _proofImage = File(pickedFile.path);
-      });
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("✅ Proof image selected")),
-      );
+    final picked = await ImagePicker().pickImage(source: ImageSource.gallery);
+    if (picked != null) {
+      setState(() => _proofImage = File(picked.path));
     }
   }
 
   void _verifyOtp() {
     if (_otpController.text.trim() == "1234") {
       setState(() => otpVerified = true);
-      ScaffoldMessenger.of(context)
-          .showSnackBar(const SnackBar(content: Text("✅ OTP Verified")));
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("✅ OTP Verified")),
+      );
     } else {
-      ScaffoldMessenger.of(context)
-          .showSnackBar(const SnackBar(content: Text("❌ Invalid OTP")));
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("❌ Invalid OTP")),
+      );
     }
   }
 
   void _confirmDonation() {
-    if (_formKey.currentState!.validate() && otpVerified) {
-      final provider =
-          Provider.of<GamificationProvider>(context, listen: false);
-      provider.awardDonationBadge(
-        userId: "u1",
-        displayName: _nameController.text.trim().isNotEmpty
-            ? _nameController.text.trim()
-            : "Anonymous Donor",
-      );
+    final provider = Provider.of<GamificationProvider>(context, listen: false);
+    provider.awardDonationBadge(
+      userId: "u1",
+      displayName: _nameController.text.trim().isNotEmpty
+          ? _nameController.text.trim()
+          : "Anonymous Donor",
+    );
 
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text("🎉 Congratulations!"),
+        content: const Text(
+            "You have completed your first donation!\n\n+50 Points Earned\n🏅 Badge Unlocked"),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+              Navigator.pop(context);
+            },
+            child: const Text("OK"),
+          ),
+        ],
+      ),
+    );
+    if (_formKey.currentState!.validate() && otpVerified) {
       final newDonor = Donor(
+        id: Uuid().v4(),
         name: _nameController.text.trim(),
         bloodGroup: _bloodGroupController.text.trim(),
         city: _cityController.text.trim(),
@@ -72,6 +84,7 @@ class _VerifyDonationPageState extends State<VerifyDonationPage> {
         points: 50,
         badge: "🏅 Bronze Donor",
       );
+
       donors.add(newDonor);
 
       showDialog(
@@ -104,15 +117,13 @@ class _VerifyDonationPageState extends State<VerifyDonationPage> {
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: AppBar(
-        title: const Text("Verify Donation"),
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        flexibleSpace: Container(
-          decoration: const BoxDecoration(
-            gradient: LinearGradient(colors: [Colors.red, Colors.black87]),
-          ),
-        ),
-      ),
+          title: const Text("Verify Donation"),
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          flexibleSpace: Container(
+              decoration: const BoxDecoration(
+                  gradient:
+                      LinearGradient(colors: [Colors.red, Colors.black87])))),
       body: Container(
         decoration: const BoxDecoration(
             gradient: LinearGradient(colors: [Colors.black87, Colors.red])),
@@ -136,15 +147,24 @@ class _VerifyDonationPageState extends State<VerifyDonationPage> {
                     child: Column(
                       children: [
                         _glassField(
-                            _nameController, "Full Name", "Enter your name"),
+                            controller: _nameController,
+                            label: "Full Name",
+                            validatorMsg: "Enter your name"),
                         const SizedBox(height: 12),
-                        _glassField(_bloodGroupController, "Blood Group",
-                            "Enter blood group"),
+                        _glassField(
+                            controller: _bloodGroupController,
+                            label: "Blood Group",
+                            validatorMsg: "Enter blood group"),
                         const SizedBox(height: 12),
-                        _glassField(_cityController, "City", "Enter city"),
+                        _glassField(
+                            controller: _cityController,
+                            label: "City",
+                            validatorMsg: "Enter city"),
                         const SizedBox(height: 12),
-                        _glassField(_contactController, "Contact Number",
-                            "Enter contact"),
+                        _glassField(
+                            controller: _contactController,
+                            label: "Contact Number",
+                            validatorMsg: "Enter contact"),
                         const SizedBox(height: 12),
                         _proofImage == null
                             ? TextButton.icon(
@@ -160,8 +180,10 @@ class _VerifyDonationPageState extends State<VerifyDonationPage> {
                         Row(
                           children: [
                             Expanded(
-                              child:
-                                  _glassField(_otpController, "Enter OTP", ""),
+                              child: _glassField(
+                                  controller: _otpController,
+                                  label: "Enter OTP",
+                                  validatorMsg: ""),
                             ),
                             const SizedBox(width: 8),
                             ElevatedButton(
@@ -201,7 +223,9 @@ class _VerifyDonationPageState extends State<VerifyDonationPage> {
   }
 
   Widget _glassField(
-      TextEditingController controller, String label, String validatorMsg) {
+      {required TextEditingController controller,
+      required String label,
+      required String validatorMsg}) {
     return TextFormField(
       controller: controller,
       style: const TextStyle(color: Colors.white),
@@ -214,9 +238,8 @@ class _VerifyDonationPageState extends State<VerifyDonationPage> {
         filled: true,
         fillColor: Colors.white.withOpacity(0.04),
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide.none,
-        ),
+            borderRadius: BorderRadius.circular(12),
+            borderSide: BorderSide.none),
         contentPadding:
             const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
       ),

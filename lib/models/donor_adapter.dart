@@ -13,15 +13,16 @@ class DonorAdapter extends TypeAdapter<Donor> {
       fields[reader.readByte()] = reader.read();
     }
     return Donor(
-      name: fields[0] as String,
-      bloodGroup: fields[1] as String,
-      city: fields[2] as String,
-      contact: fields[3] as String,
-      latitude: fields[4] as double?,
-      longitude: fields[5] as double?,
-      verified: fields[6] as bool,
-      points: fields[7] as int,
-      badge: fields[8] as String,
+      id: fields[0] as String,
+      name: fields[1] as String,
+      bloodGroup: fields[2] as String,
+      city: fields[3] as String,
+      contact: fields[4] as String,
+      latitude: fields[5] as double?,
+      longitude: fields[6] as double?,
+      verified: fields[7] as bool,
+      points: fields[8] as int,
+      badge: fields[9] as String,
     );
   }
 

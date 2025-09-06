@@ -1,8 +1,8 @@
 // request_blood_page.dart
 import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
-import 'package:scanmyblood/models/blood_request.dart';
-import 'package:scanmyblood/services/database_service.dart';
+import '../../models/blood_request.dart';
+import '../../services/database_service.dart';
 import 'dart:ui';
 
 class RequestBloodPage extends StatefulWidget {
