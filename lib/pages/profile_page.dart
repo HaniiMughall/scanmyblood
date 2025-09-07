@@ -10,17 +10,26 @@ class ProfilePage extends StatefulWidget {
   State<ProfilePage> createState() => _ProfilePageState();
 }
 
-class _ProfilePageState extends State<ProfilePage> {
+class _ProfilePageState extends State<ProfilePage>
+    with SingleTickerProviderStateMixin {
   User? _user;
   bool _editing = false;
   final _name = TextEditingController();
   final _blood = TextEditingController();
   final _contact = TextEditingController();
 
+  late AnimationController _controller;
+  late Animation<double> _fadeIn;
+
   @override
   void initState() {
     super.initState();
     _loadUser();
+
+    _controller =
+        AnimationController(vsync: this, duration: const Duration(milliseconds: 800));
+    _fadeIn = CurvedAnimation(parent: _controller, curve: Curves.easeIn);
+    _controller.forward();
   }
 
   Future<void> _loadUser() async {
@@ -54,6 +63,7 @@ class _ProfilePageState extends State<ProfilePage> {
     _name.dispose();
     _blood.dispose();
     _contact.dispose();
+    _controller.dispose();
     super.dispose();
   }
 
@@ -63,52 +73,171 @@ class _ProfilePageState extends State<ProfilePage> {
       return const Scaffold(body: Center(child: Text("No user logged in")));
     }
     return Scaffold(
-      appBar: AppBar(title: const Text("Profile"), backgroundColor: Colors.red),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
+      body: FadeTransition(
+        opacity: _fadeIn,
         child: Column(
           children: [
-            CircleAvatar(
-                radius: 40,
-                child: Text(_user!.name.isNotEmpty ? _user!.name[0] : 'U')),
-            const SizedBox(height: 12),
-            if (!_editing) ...[
-              Text(_user!.name,
-                  style: const TextStyle(
-                      fontSize: 20, fontWeight: FontWeight.bold)),
-              const SizedBox(height: 6),
-              Text(_user!.email),
-              const SizedBox(height: 12),
-              Text("Blood Group: ${_user!.bloodGroup ?? 'N/A'}"),
-              const SizedBox(height: 6),
-              Text("Contact: ${_user!.contact ?? 'N/A'}"),
-            ] else ...[
-              TextField(
-                  controller: _name,
-                  decoration: const InputDecoration(labelText: "Name")),
-              const SizedBox(height: 8),
-              TextField(
-                  controller: _blood,
-                  decoration: const InputDecoration(labelText: "Blood Group")),
-              const SizedBox(height: 8),
-              TextField(
-                  controller: _contact,
-                  decoration: const InputDecoration(labelText: "Contact")),
-            ],
-            const SizedBox(height: 20),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                ElevatedButton(
-                    onPressed: () => setState(() => _editing = !_editing),
-                    child: Text(_editing ? "Cancel" : "Edit")),
-                const SizedBox(width: 12),
-                if (_editing)
-                  ElevatedButton(onPressed: _save, child: const Text("Save")),
-              ],
+            // Header with gradient and profile picture
+            Container(
+              height: 230,
+              width: double.infinity,
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [Color(0xFFe52d27), Color(0xFFff512f)],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+                borderRadius:
+                    BorderRadius.vertical(bottom: Radius.circular(30)),
+              ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Stack(
+                    children: [
+                      CircleAvatar(
+                        radius: 55,
+                        backgroundColor: Colors.white,
+                        child: Text(
+                          _user!.name.isNotEmpty ? _user!.name[0] : 'U',
+                          style: const TextStyle(
+                              fontSize: 40, fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                      Positioned(
+                        bottom: 0,
+                        right: 0,
+                        child: GestureDetector(
+                          onTap: () {
+                            // TODO: add image picker functionality here
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                  content:
+                                      Text("Profile picture edit coming soon")),
+                            );
+                          },
+                          child: CircleAvatar(
+                            backgroundColor: Colors.white,
+                            radius: 20,
+                            child: const Icon(Icons.camera_alt,
+                                color: Colors.red),
+                          ),
+                        ),
+                      )
+                    ],
+                  ),
+                  const SizedBox(height: 10),
+                  Text(
+                    _user!.name,
+                    style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 22,
+                        fontWeight: FontWeight.bold),
+                  ),
+                  Text(
+                    _user!.email,
+                    style: const TextStyle(color: Colors.white70, fontSize: 14),
+                  ),
+                ],
+              ),
+            ),
+
+            // Info Section
+            Expanded(
+              child: AnimatedSwitcher(
+                duration: const Duration(milliseconds: 400),
+                child: !_editing
+                    ? ListView(
+                        padding: const EdgeInsets.all(20),
+                        children: [
+                          _buildInfoCard(Icons.bloodtype, "Blood Group",
+                              _user!.bloodGroup ?? "N/A"),
+                          const SizedBox(height: 12),
+                          _buildInfoCard(
+                              Icons.phone, "Contact", _user!.contact ?? "N/A"),
+                          const SizedBox(height: 20),
+                          ElevatedButton(
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: const Color(0xFFe52d27),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(30),
+                              ),
+                              padding:
+                                  const EdgeInsets.symmetric(vertical: 14),
+                            ),
+                            onPressed: () =>
+                                setState(() => _editing = !_editing),
+                            child: const Text(
+                              "Edit Profile",
+                              style: TextStyle(
+                                  fontSize: 16, fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                        ],
+                      )
+                    : ListView(
+                        padding: const EdgeInsets.all(20),
+                        children: [
+                          TextField(
+                              controller: _name,
+                              decoration:
+                                  const InputDecoration(labelText: "Name")),
+                          const SizedBox(height: 12),
+                          TextField(
+                              controller: _blood,
+                              decoration: const InputDecoration(
+                                  labelText: "Blood Group")),
+                          const SizedBox(height: 12),
+                          TextField(
+                              controller: _contact,
+                              decoration:
+                                  const InputDecoration(labelText: "Contact")),
+                          const SizedBox(height: 20),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              ElevatedButton(
+                                onPressed: () =>
+                                    setState(() => _editing = false),
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.grey,
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(30),
+                                  ),
+                                ),
+                                child: const Text("Cancel"),
+                              ),
+                              const SizedBox(width: 16),
+                              ElevatedButton(
+                                onPressed: _save,
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: const Color(0xFFe52d27),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(30),
+                                  ),
+                                ),
+                                child: const Text("Save"),
+                              ),
+                            ],
+                          )
+                        ],
+                      ),
+              ),
             )
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildInfoCard(IconData icon, String title, String value) {
+    return Card(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+      elevation: 3,
+      child: ListTile(
+        leading: Icon(icon, color: Colors.red),
+        title: Text(title),
+        subtitle: Text(value),
       ),
     );
   }

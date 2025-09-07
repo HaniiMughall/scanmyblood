@@ -31,7 +31,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
   void _nextPage() {
     if (_currentPage == _onboardingData.length - 1) {
-      Navigator.pushReplacementNamed(context, '/home');
+      Navigator.pushReplacementNamed(context, '/main');
     } else {
       _controller.nextPage(
         duration: const Duration(milliseconds: 400),
@@ -98,7 +98,6 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            // Image
                             AnimatedSwitcher(
                               duration: const Duration(milliseconds: 500),
                               transitionBuilder: (child, anim) =>
@@ -106,8 +105,6 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                               child: _buildImage(item['image'] ?? ""),
                             ),
                             const SizedBox(height: 40),
-
-                            // Title with gradient text
                             ShaderMask(
                               shaderCallback: (bounds) => const LinearGradient(
                                 colors: [Colors.white, Colors.yellowAccent],
@@ -124,8 +121,6 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                               ),
                             ),
                             const SizedBox(height: 18),
-
-                            // Subtitle
                             Text(
                               item['subtitle'] ?? "",
                               style: TextStyle(
@@ -186,7 +181,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     // Skip
                     TextButton(
                       onPressed: () =>
-                          Navigator.pushReplacementNamed(context, '/home'),
+                          Navigator.pushReplacementNamed(context, '/main'),
                       child: const Text(
                         "Skip",
                         style: TextStyle(

@@ -3,25 +3,25 @@ part 'user.g.dart';
 
 @HiveType(typeId: 0)
 class User extends HiveObject {
-  @HiveField(1)
+  @HiveField(0)
   final String id;
 
-  @HiveField(2)
+  @HiveField(1)
   String name;
 
-  @HiveField(3)
+  @HiveField(2)
   String email;
 
-  @HiveField(4)
+  @HiveField(3)
   String password;
 
-  @HiveField(5)
+  @HiveField(4)
   String? bloodGroup;
 
-  @HiveField(6)
+  @HiveField(5)
   String? contact;
 
-  @HiveField(7)
+  @HiveField(6)
   final String role; // "user" ya "admin"
 
   User({

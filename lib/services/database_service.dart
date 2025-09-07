@@ -7,12 +7,23 @@ class DatabaseService {
   static final DatabaseService instance = DatabaseService._internal();
   DatabaseService._internal();
 
-  static const String usersBox = 'users_box';
-  static const String donorsBox = 'donors_box';
-  static const String requestsBox = 'requests_box';
-  static const String pendingBox = 'pending_box';
+  static const String usersBox = "users";
+  static const String donorsBox = "donors";
+  static const String requestsBox = "requests";
+  static const String pendingBox = "pending";
 
+  /// ✅ Init Hive
   Future<void> init() async {
+    if (!Hive.isAdapterRegistered(0)) {
+      Hive.registerAdapter(UserAdapter());
+    }
+    if (!Hive.isAdapterRegistered(1)) {
+      Hive.registerAdapter(DonorAdapter());
+    }
+    if (!Hive.isAdapterRegistered(2)) {
+      Hive.registerAdapter(BloodRequestAdapter());
+    }
+
     if (!Hive.isBoxOpen(usersBox)) await Hive.openBox<User>(usersBox);
     if (!Hive.isBoxOpen(donorsBox)) await Hive.openBox<Donor>(donorsBox);
     if (!Hive.isBoxOpen(requestsBox))
@@ -20,104 +31,67 @@ class DatabaseService {
     if (!Hive.isBoxOpen(pendingBox)) await Hive.openBox<dynamic>(pendingBox);
   }
 
-  // -------------------- USERS --------------------
+  /// ✅ Add user
   Future<void> addUser(User user) async {
     final box = Hive.box<User>(usersBox);
     await box.put(user.email, user);
   }
 
-  Future<bool> validateUser(String email, String password) async {
-    final box = Hive.box<User>(usersBox);
-    if (!box.containsKey(email)) return false;
-    final u = box.get(email)!;
-    return u.password == password;
-  }
-
+  /// ✅ Get user (async banaya)
   Future<User?> getUser(String email) async {
     final box = Hive.box<User>(usersBox);
     return box.get(email);
   }
 
-  // -------------------- DONORS --------------------
-  Future<void> addDonor(Donor donor, {bool pendingSync = true}) async {
+  /// ✅ Validate login
+  Future<bool> validateUser(String email, String password) async {
+    final box = Hive.box<User>(usersBox);
+    final user = box.get(email);
+    if (user == null) return false;
+    return user.password == password;
+  }
+
+  /// ✅ Get all users
+  Future<List<User>> getAllUsers() async {
+    final box = Hive.box<User>(usersBox);
+    return box.values.toList();
+  }
+
+  /// ✅ Add donor
+  Future<void> addDonor(Donor donor, {bool pendingSync = false}) async {
     final box = Hive.box<Donor>(donorsBox);
+    await box.put(donor.id, donor);
 
-    Donor? existing;
-    try {
-      existing = box.values.firstWhere((d) => d.contact == donor.contact);
-    } catch (e) {
-      existing = null;
-    }
-
-    if (existing != null) {
-      existing.name = donor.name;
-      existing.city = donor.city;
-      existing.bloodGroup = donor.bloodGroup;
-      existing.verified = donor.verified;
-      await existing.save();
-    } else {
-      await box.add(donor);
-    }
-
-    if (pendingSync && existing == null) {
-      await addPending({
-        'type': 'donor',
-        'data': {
-          'name': donor.name,
-          'bloodGroup': donor.bloodGroup,
-          'city': donor.city,
-          'contact': donor.contact,
-        },
-      });
+    if (pendingSync) {
+      final pBox = Hive.box<dynamic>(pendingBox);
+      await pBox.add({"type": "donor", "data": donor.toJson()});
     }
   }
 
+  /// ✅ Get all donors
   Future<List<Donor>> getAllDonors() async {
     final box = Hive.box<Donor>(donorsBox);
     return box.values.toList();
   }
 
-  Future<List<Donor>> searchDonors(String query) async {
-    final lower = query.toLowerCase();
-    final all = await getAllDonors();
-    return all.where((d) {
-      return d.name.toLowerCase().contains(lower) ||
-          d.city.toLowerCase().contains(lower) ||
-          d.bloodGroup.toLowerCase().contains(lower) ||
-          d.contact.toLowerCase().contains(lower);
-    }).toList();
-  }
-
-  // -------------------- BLOOD REQUESTS --------------------
-  Future<void> addRequest(BloodRequest r, {bool pendingSync = true}) async {
+  /// ✅ Add request
+  Future<void> addBloodRequest(BloodRequest request,
+      {bool pendingSync = false}) async {
     final box = Hive.box<BloodRequest>(requestsBox);
-    await box.add(r);
+    await box.put(request.id, request);
 
     if (pendingSync) {
-      await addPending({
-        'type': 'request',
-        'data': {
-          'requesterName': r.requesterName,
-          'bloodGroup': r.bloodGroup,
-          'city': r.city,
-          'contact': r.contact,
-          'status': r.status.toString(),
-        },
-      });
+      final pBox = Hive.box<dynamic>(pendingBox);
+      await pBox.add({"type": "request", "data": request.toJson()});
     }
   }
 
-  Future<List<BloodRequest>> getAllRequests() async {
-    final box = Hive.box<BloodRequest>(requestsBox);
-    return box.values.toList();
+  /// ✅ Alias (for backward compatibility)
+  Future<void> addRequest(BloodRequest request, {bool pendingSync = false}) {
+    return addBloodRequest(request, pendingSync: pendingSync);
   }
 
-  // -------------------- PENDING SYNC --------------------
-  Future<void> addPending(Map<String, dynamic> item) async {
-    final box = Hive.box<dynamic>(pendingBox);
-    await box.add(item);
-  }
-
+  /// ✅ Pending sync support
   Future<List<dynamic>> getPending() async {
     final box = Hive.box<dynamic>(pendingBox);
     return box.values.toList();
@@ -125,7 +99,6 @@ class DatabaseService {
 
   Future<void> clearPendingAt(int index) async {
     final box = Hive.box<dynamic>(pendingBox);
-    final key = box.keyAt(index);
-    await box.delete(key);
+    await box.deleteAt(index);
   }
 }

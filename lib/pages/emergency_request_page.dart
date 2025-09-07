@@ -1,13 +1,11 @@
 // emergency_request_page.dart
 import 'package:flutter/material.dart';
-import 'package:scanmyblood/services/location_service.dart';
+import '../../services/notification_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:scanmyblood/models/blood_request.dart';
-import 'package:scanmyblood/services/database_service.dart';
+import '../../models/blood_request.dart';
+import '../../services/database_service.dart';
 import 'package:uuid/uuid.dart';
 import 'dart:ui';
-
-import 'package:scanmyblood/services/notification_service.dart';
 
 class EmergencyRequestPage extends StatefulWidget {
   const EmergencyRequestPage({super.key});

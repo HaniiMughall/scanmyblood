@@ -1,29 +1,53 @@
 import 'package:flutter/material.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+
+// Screens
 import 'screens/splash_screen.dart';
 import 'screens/login_screen.dart';
 import 'screens/onboarding_screen.dart';
+import 'screens/signup_screen.dart';
 import 'pages/main_page.dart';
 
-void main() {
+// Models
+import 'models/user.dart';
+import 'models/donor.dart';
+import 'models/blood_request.dart';
+
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  runApp(const BloodApp());
+
+  // ✅ Hive init
+  await Hive.initFlutter();
+
+  // ✅ Register adapters
+  Hive.registerAdapter(UserAdapter());
+  Hive.registerAdapter(DonorAdapter());
+  Hive.registerAdapter(BloodRequestAdapter());
+  Hive.registerAdapter(RequestStatusAdapter());
+
+  // ✅ Open boxes
+  await Hive.openBox<User>("users");
+  await Hive.openBox<Donor>("donors");
+  await Hive.openBox<BloodRequest>("requests");
+  await Hive.openBox("pending"); // generic box
+
+  runApp(const ScanMyBloodApp());
 }
 
-class BloodApp extends StatefulWidget {
-  const BloodApp({super.key});
+class ScanMyBloodApp extends StatefulWidget {
+  const ScanMyBloodApp({super.key});
 
   @override
-  State<BloodApp> createState() => _BloodAppState();
+  State<ScanMyBloodApp> createState() => _ScanMyBloodAppState();
 }
 
-class _BloodAppState extends State<BloodApp> {
-  ThemeMode _themeMode = ThemeMode.light;
+class _ScanMyBloodAppState extends State<ScanMyBloodApp> {
+  bool _isDarkMode = false;
   bool _isEnglish = true;
 
   void _toggleTheme() {
     setState(() {
-      _themeMode =
-          _themeMode == ThemeMode.light ? ThemeMode.dark : ThemeMode.light;
+      _isDarkMode = !_isDarkMode;
     });
   }
 
@@ -36,23 +60,25 @@ class _BloodAppState extends State<BloodApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Scan My Blood',
+      title: "Scan My Blood",
       debugShowCheckedModeBanner: false,
+
+      // ✅ Theme handling
       theme: ThemeData(primarySwatch: Colors.red),
       darkTheme: ThemeData.dark(),
-      themeMode: _themeMode,
+      themeMode: _isDarkMode ? ThemeMode.dark : ThemeMode.light,
 
-      // 👇 first screen: Splash
-      initialRoute: '/',
-
+      // ✅ Routes
+      initialRoute: "/splash",
       routes: {
-        '/': (context) => const SplashScreen(), // splash first
-        '/login': (context) => const LoginScreen(), // after splash
-        '/onboarding': (context) => const OnboardingScreen(), // after login
-        '/home': (context) => MainPage( // home page
+        "/splash": (_) => const SplashScreen(),
+        "/login": (_) => const LoginScreen(),
+        "/signup": (_) => const SignUpScreen(),
+        "/onboarding": (_) => const OnboardingScreen(),
+        "/main": (_) => MainPage(
               toggleTheme: _toggleTheme,
               toggleLanguage: _toggleLanguage,
-              isDarkMode: _themeMode == ThemeMode.dark,
+              isDarkMode: _isDarkMode,
               isEnglish: _isEnglish,
             ),
       },

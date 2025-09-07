@@ -2,9 +2,9 @@
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:scanmyblood/models/donor.dart';
-import 'package:scanmyblood/services/database_service.dart';
-import 'package:scanmyblood/services/location_service.dart';
+import '../../models/donor.dart';
+import '../../services/database_service.dart';
+import '../../services/location_service.dart';
 import 'dart:ui';
 
 class NearbyDonorPage extends StatefulWidget {

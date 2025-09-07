@@ -17,39 +17,42 @@ class DonorAdapter extends TypeAdapter<Donor> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return Donor(
-      name: fields[0] as String,
-      bloodGroup: fields[1] as String,
-      city: fields[2] as String,
-      contact: fields[3] as String,
-      latitude: fields[4] as double?,
-      longitude: fields[5] as double?,
-      verified: fields[6] as bool,
-      points: fields[7] as int,
-      badge: fields[8] as String,
+      id: fields[0] as String,
+      name: fields[1] as String,
+      bloodGroup: fields[2] as String,
+      city: fields[3] as String,
+      contact: fields[4] as String,
+      latitude: fields[5] as double?,
+      longitude: fields[6] as double?,
+      verified: fields[7] as bool,
+      points: fields[8] as int,
+      badge: fields[9] as String,
     );
   }
 
   @override
   void write(BinaryWriter writer, Donor obj) {
     writer
-      ..writeByte(9)
+      ..writeByte(10)
       ..writeByte(0)
-      ..write(obj.name)
+      ..write(obj.id)
       ..writeByte(1)
-      ..write(obj.bloodGroup)
+      ..write(obj.name)
       ..writeByte(2)
-      ..write(obj.city)
+      ..write(obj.bloodGroup)
       ..writeByte(3)
-      ..write(obj.contact)
+      ..write(obj.city)
       ..writeByte(4)
-      ..write(obj.latitude)
+      ..write(obj.contact)
       ..writeByte(5)
-      ..write(obj.longitude)
+      ..write(obj.latitude)
       ..writeByte(6)
-      ..write(obj.verified)
+      ..write(obj.longitude)
       ..writeByte(7)
-      ..write(obj.points)
+      ..write(obj.verified)
       ..writeByte(8)
+      ..write(obj.points)
+      ..writeByte(9)
       ..write(obj.badge);
   }
 
