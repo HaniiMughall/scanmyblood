@@ -5,88 +5,43 @@ import 'emergency_request_page.dart';
 import 'donate_flow/verify_donation_page.dart';
 
 class HomePage extends StatelessWidget {
-  final VoidCallback toggleTheme;
-  final VoidCallback toggleLanguage;
-  final bool isDarkMode;
-  final bool isEnglish;
-
-  const HomePage({
-    super.key,
-    required this.toggleTheme,
-    required this.toggleLanguage,
-    required this.isDarkMode,
-    required this.isEnglish,
-  });
-
-  Widget _buildGlassButton(
-      BuildContext context, String text, IconData icon, VoidCallback onTap) {
-    return SizedBox(
-      height: 100,
-      child: ElevatedButton.icon(
-        style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.white.withOpacity(0.15),
-          foregroundColor: Colors.white,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20),
-          ),
-          elevation: 0,
-        ),
-        icon: Icon(icon, size: 28, color: Colors.white),
-        label: Text(
-          text,
-          style: const TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
-            color: Colors.white,
-            letterSpacing: 1.1,
-          ),
-        ),
-        onPressed: onTap,
-      ),
-    );
-  }
+  const HomePage({super.key});
 
   void _showBloodGroupDialog(BuildContext context) {
     String selectedGroup = 'A+';
-
     showDialog(
       context: context,
       builder: (context) {
         return AlertDialog(
-          backgroundColor: Colors.black.withOpacity(0.85),
+          backgroundColor: Colors.white,
           shape:
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
           title: const Text(
             'Select Your Blood Group',
-            style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
+            style: TextStyle(fontWeight: FontWeight.bold, color: Colors.red),
           ),
           content: StatefulBuilder(
             builder: (context, setState) {
               return DropdownButton<String>(
-                dropdownColor: Colors.black,
                 isExpanded: true,
                 value: selectedGroup,
                 items: ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-']
                     .map((group) => DropdownMenuItem(
                           value: group,
-                          child: Text(group,
-                              style: const TextStyle(color: Colors.white)),
+                          child: Text(group),
                         ))
                     .toList(),
                 onChanged: (value) {
-                  if (value != null) {
-                    setState(() {
-                      selectedGroup = value;
-                    });
-                  }
+                  setState(() {
+                    selectedGroup = value!;
+                  });
                 },
               );
             },
           ),
           actions: [
             TextButton(
-              child:
-                  const Text('Next', style: TextStyle(color: Colors.redAccent)),
+              child: const Text('Next', style: TextStyle(color: Colors.red)),
               onPressed: () {
                 Navigator.pop(context);
                 Navigator.push(
@@ -103,55 +58,95 @@ class HomePage extends StatelessWidget {
     );
   }
 
+  Widget _buildMenuButton(
+      BuildContext context, String text, IconData icon, VoidCallback onTap) {
+    return Expanded(
+      child: Container(
+        height: 100,
+        margin: const EdgeInsets.all(6),
+        child: ElevatedButton(
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.red.shade900,
+            foregroundColor: Colors.white,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+            ),
+          ),
+          onPressed: onTap,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(icon, size: 30),
+              const SizedBox(height: 8),
+              Text(
+                text,
+                textAlign: TextAlign.center,
+                style:
+                    const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: const BoxDecoration(
-        gradient: LinearGradient(
-          colors: [Colors.red, Colors.black87],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-      ),
+      color: Colors.red.shade900,
       child: Center(
-        child: Container(
-          padding: const EdgeInsets.all(20),
-          constraints: const BoxConstraints(maxWidth: 600),
-          decoration: BoxDecoration(
-            color: Colors.white.withOpacity(0.05),
-            borderRadius: BorderRadius.circular(25),
-            border: Border.all(color: Colors.white.withOpacity(0.2)),
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(
+            maxWidth: 500, // limits the white box width
           ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Row(
-                children: [
-                  Expanded(
-                    child: _buildGlassButton(
+          child: Container(
+            padding: const EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(16),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.2),
+                  blurRadius: 8,
+                  offset: const Offset(0, 4),
+                ),
+              ],
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Text(
+                  "Welcome to Scan Blood App",
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.red,
+                  ),
+                ),
+                const SizedBox(height: 20),
+                // 1st row
+                Row(
+                  children: [
+                    _buildMenuButton(
                         context,
                         "I want to Donate",
                         Icons.volunteer_activism,
                         () => _showBloodGroupDialog(context)),
-                  ),
-                  const SizedBox(width: 15),
-                  Expanded(
-                    child: _buildGlassButton(
-                        context, "I need Blood", Icons.bloodtype, () {
+                    _buildMenuButton(context, "I need Blood", Icons.bloodtype,
+                        () {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
                             builder: (context) => FindDonorPage()),
                       );
                     }),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 20),
-              Row(
-                children: [
-                  Expanded(
-                    child: _buildGlassButton(
+                  ],
+                ),
+                // 2nd row
+                Row(
+                  children: [
+                    _buildMenuButton(
                         context, "Emergency Request", Icons.local_hospital, () {
                       Navigator.push(
                         context,
@@ -159,21 +154,18 @@ class HomePage extends StatelessWidget {
                             builder: (context) => EmergencyRequestPage()),
                       );
                     }),
-                  ),
-                  const SizedBox(width: 15),
-                  Expanded(
-                    child: _buildGlassButton(
-                        context, "Mark as Donated", Icons.verified, () {
+                    _buildMenuButton(context, "Mark as Donated", Icons.verified,
+                        () {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
                             builder: (_) => const VerifyDonationPage()),
                       );
                     }),
-                  ),
-                ],
-              ),
-            ],
+                  ],
+                ),
+              ],
+            ),
           ),
         ),
       ),

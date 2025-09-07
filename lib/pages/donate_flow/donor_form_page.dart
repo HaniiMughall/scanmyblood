@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
 import '/services/database_service.dart';
 import '/models/donor.dart';
-import '/utils/global_data.dart';
-import 'dart:ui';
+import '/widgets/theme_page.dart';
 
 class DonorFormPage extends StatefulWidget {
   final String myGroup;
@@ -23,10 +22,9 @@ class _DonorFormPageState extends State<DonorFormPage> {
   Future<void> _submitForm() async {
     if (_formKey.currentState!.validate()) {
       setState(() => _isSubmitting = true);
-      FocusScope.of(context).unfocus();
 
       final donor = Donor(
-        id: Uuid().v4(),
+        id: const Uuid().v4(),
         name: _nameController.text.trim(),
         city: _cityController.text.trim(),
         contact: _contactController.text.trim(),
@@ -36,143 +34,74 @@ class _DonorFormPageState extends State<DonorFormPage> {
 
       await DatabaseService.instance.addDonor(donor);
 
-      final index = donors.indexWhere((d) => d.contact == donor.contact);
-      if (index >= 0) {
-        donors[index] = donor;
-      } else {
-        donors.add(donor);
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("✅ Thank you for registering!")),
+        );
+        Navigator.pop(context);
       }
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text("Thank you for registering! Admin will verify."),
-          duration: Duration(seconds: 2),
-        ),
-      );
-
-      await Future.delayed(const Duration(milliseconds: 500));
-      if (mounted) Navigator.pop(context);
       setState(() => _isSubmitting = false);
     }
   }
 
   @override
-  void dispose() {
-    _nameController.dispose();
-    _cityController.dispose();
-    _contactController.dispose();
-    super.dispose();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      extendBodyBehindAppBar: true,
-      appBar: AppBar(
-        title: const Text("Register as Donor"),
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        flexibleSpace: Container(
-          decoration: const BoxDecoration(
-            gradient: LinearGradient(colors: [Colors.red, Colors.black87]),
-          ),
+    return ThemedPage(
+      title: "Register as Donor",
+      child: Container(
+        padding: const EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [BoxShadow(color: Colors.black26, blurRadius: 6)],
         ),
-      ),
-      body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(colors: [Colors.black87, Colors.red]),
-        ),
-        child: Center(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 18.0, vertical: 24),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(22),
-              child: BackdropFilter(
-                filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
-                child: Container(
-                  padding: const EdgeInsets.all(18),
-                  decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.06),
-                    borderRadius: BorderRadius.circular(22),
-                    border: Border.all(color: Colors.white24),
-                  ),
-                  child: Form(
-                    key: _formKey,
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(
-                          "Your Blood Group: ${widget.myGroup}",
-                          style: const TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.white),
-                        ),
-                        const SizedBox(height: 18),
-                        _glassTextField(
-                            controller: _nameController, label: "Name"),
-                        const SizedBox(height: 12),
-                        _glassTextField(
-                            controller: _cityController, label: "City"),
-                        const SizedBox(height: 12),
-                        _glassTextField(
-                            controller: _contactController,
-                            label: "Contact",
-                            keyboardType: TextInputType.phone),
-                        const SizedBox(height: 18),
-                        SizedBox(
-                          width: double.infinity,
-                          child: ElevatedButton(
-                            onPressed: _isSubmitting ? null : _submitForm,
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.red,
-                              padding: const EdgeInsets.symmetric(vertical: 14),
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(14)),
-                            ),
-                            child: _isSubmitting
-                                ? const SizedBox(
-                                    height: 18,
-                                    width: 18,
-                                    child: CircularProgressIndicator(
-                                        color: Colors.white, strokeWidth: 2),
-                                  )
-                                : const Text("Submit"),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
+        child: Form(
+          key: _formKey,
+          child: Column(
+            mainAxisSize: MainAxisSize.min, // ✅ jitni zarurat hai utni height
+            children: [
+              Text(
+                "Your Blood Group: ${widget.myGroup}",
+                style:
+                    const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
               ),
-            ),
+              const SizedBox(height: 16),
+              _textField(controller: _nameController, label: "Name"),
+              const SizedBox(height: 12),
+              _textField(controller: _cityController, label: "City"),
+              const SizedBox(height: 12),
+              _textField(controller: _contactController, label: "Contact"),
+              const SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: _isSubmitting ? null : _submitForm,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.red.shade900,
+                  minimumSize: const Size(double.infinity, 48),
+                ),
+                child: _isSubmitting
+                    ? const CircularProgressIndicator(color: Colors.white)
+                    : const Text("Submit",
+                        style: TextStyle(color: Colors.white)),
+              ),
+            ],
           ),
         ),
       ),
     );
   }
 
-  Widget _glassTextField(
-      {required TextEditingController controller,
-      required String label,
-      TextInputType keyboardType = TextInputType.text}) {
+  Widget _textField({
+    required TextEditingController controller,
+    required String label,
+    TextInputType keyboardType = TextInputType.text,
+  }) {
     return TextFormField(
       controller: controller,
       keyboardType: keyboardType,
-      style: const TextStyle(color: Colors.white),
-      validator: (v) =>
-          v == null || v.trim().isEmpty ? "Enter ${label.toLowerCase()}" : null,
+      validator: (v) => v == null || v.trim().isEmpty ? "Enter $label" : null,
       decoration: InputDecoration(
         labelText: label,
-        labelStyle: const TextStyle(color: Colors.white70),
-        filled: true,
-        fillColor: Colors.white.withOpacity(0.04),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(14),
-          borderSide: BorderSide.none,
-        ),
-        contentPadding:
-            const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
       ),
     );
   }

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'donate_flow/donor_form_page.dart';
-import 'dart:ui';
+import 'package:scanmyblood/widgets/theme_page.dart';
 
 class CompatibilityPage extends StatelessWidget {
   final String myGroup;
@@ -22,68 +22,46 @@ class CompatibilityPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final canDonateTo = compatibilityMap[myGroup] ?? [];
 
-    return Scaffold(
-      extendBodyBehindAppBar: true,
-      appBar: AppBar(
-        title: const Text("Donation Compatibility"),
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        flexibleSpace: Container(
-          decoration: const BoxDecoration(
-            gradient: LinearGradient(colors: [Colors.red, Colors.black87]),
-          ),
-        ),
-      ),
-      body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(colors: [Colors.black87, Colors.red]),
-        ),
-        child: Padding(
-          padding: const EdgeInsets.all(12.0),
-          child: ListView.builder(
-            itemCount: canDonateTo.length,
-            itemBuilder: (context, index) {
-              String g = canDonateTo[index];
-              return Container(
-                margin: const EdgeInsets.symmetric(vertical: 8),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(16),
-                  child: BackdropFilter(
-                    filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: Colors.white.withOpacity(0.06),
-                        borderRadius: BorderRadius.circular(16),
-                        border: Border.all(color: Colors.white24),
+    return ThemedPage(
+      title: "Donation Compatibility",
+      child: Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 500),
+          child: Container(
+            padding: const EdgeInsets.all(16),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(16),
+              boxShadow: [BoxShadow(color: Colors.black26, blurRadius: 6)],
+            ),
+            child: ListView.builder(
+              shrinkWrap: true,
+              itemCount: canDonateTo.length,
+              itemBuilder: (context, index) {
+                String g = canDonateTo[index];
+                return Card(
+                  margin: const EdgeInsets.symmetric(vertical: 8),
+                  child: ListTile(
+                    title: Text("You can donate to $g"),
+                    trailing: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.red.shade900,
+                        foregroundColor: Colors.white, // ✅ text white hoga
                       ),
-                      child: ListTile(
-                        title: Text(
-                          "You can donate to $g",
-                          style: const TextStyle(
-                              color: Colors.white, fontWeight: FontWeight.w600),
-                        ),
-                        trailing: ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.red,
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(12)),
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (_) => DonorFormPage(myGroup: myGroup),
                           ),
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (_) => DonorFormPage(myGroup: myGroup),
-                              ),
-                            );
-                          },
-                          child: const Text("Donate Now"),
-                        ),
-                      ),
+                        );
+                      },
+                      child: const Text("Donate Now"),
                     ),
                   ),
-                ),
-              );
-            },
+                );
+              },
+            ),
           ),
         ),
       ),
