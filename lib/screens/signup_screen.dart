@@ -193,6 +193,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
                               shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(20)),
                               backgroundColor: Colors.redAccent,
+                              foregroundColor:
+                                  Colors.white, // ✅ text white hoga
                               shadowColor: Colors.black.withOpacity(0.4),
                               elevation: 8,
                             ),

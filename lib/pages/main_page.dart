@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'home_page.dart';
-import 'compatibility_page.dart';
-import 'donor_list_page.dart';
+import '/gamification/screens/gamification_screen.dart';
 import 'profile_page.dart';
 import 'history_page.dart';
 import 'admin_panel_page.dart';
-import 'developer_page.dart';
+import 'setting_page.dart';
 
 class MainPage extends StatefulWidget {
   final VoidCallback toggleTheme;
@@ -13,7 +12,7 @@ class MainPage extends StatefulWidget {
   final bool isDarkMode;
   final bool isEnglish;
 
-  MainPage({
+  const MainPage({
     super.key,
     required this.toggleTheme,
     required this.toggleLanguage,
@@ -22,135 +21,177 @@ class MainPage extends StatefulWidget {
   });
 
   @override
-  State<MainPage> createState() => _MainPageState();
+  _MainPageState createState() => _MainPageState();
 }
 
 class _MainPageState extends State<MainPage> {
   int _selectedIndex = 0;
 
-  @override
-  Widget build(BuildContext context) {
-    final pages = [
-      HomePage(
-        toggleTheme: widget.toggleTheme,
-        toggleLanguage: widget.toggleLanguage,
-        isDarkMode: widget.isDarkMode,
-        isEnglish: widget.isEnglish,
-      ),
-      CompatibilityPage(myGroup: ""), // default empty
-      const DonorListPage(),
-      const ProfilePage(),
-    ];
+  late final List<Widget> _pages = [
+    const HomePage(),
+    const ProfilePage(),
+    const HistoryPage(),
+    const AdminPanelPage(),
+    const SettingsPage(),
+    const GamificationScreen(), // <-- add gamification as a main page
+  ];
 
-    return Container(
-      decoration: const BoxDecoration(
-        gradient: LinearGradient(
-          colors: [Colors.red, Colors.black87],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-      ),
-      child: Scaffold(
-        backgroundColor: Colors.transparent,
-        appBar: AppBar(
-          title: const Text("Scan My Blood"),
-          backgroundColor: Colors.transparent,
-          elevation: 0,
-          centerTitle: true,
-        ),
-        drawer: Drawer(
-          backgroundColor: Colors.black.withOpacity(0.85),
-          child: ListView(
-            padding: EdgeInsets.zero,
-            children: [
-              const DrawerHeader(
-                decoration: BoxDecoration(
-                  gradient: LinearGradient(
-                    colors: [Colors.red, Colors.black87],
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                  ),
-                ),
-                child: Text(
-                  "Scan My Blood",
-                  style: TextStyle(color: Colors.white, fontSize: 22),
-                ),
-              ),
-              _buildDrawerItem(
-                  Icons.admin_panel_settings,
-                  "Admin Panel",
-                  () => Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (_) => const AdminPanelPage()))),
-              _buildDrawerItem(
-                  Icons.developer_mode,
-                  "Developer View",
-                  () => Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (_) => const DeveloperPage()))),
-              _buildDrawerItem(
-                  Icons.history,
-                  "History Panel",
-                  () => Navigator.push(context,
-                      MaterialPageRoute(builder: (_) => const HistoryPage()))),
-              _buildDrawerItem(
-                  Icons.person,
-                  "Profile",
-                  () => Navigator.push(context,
-                      MaterialPageRoute(builder: (_) => const ProfilePage()))),
-            ],
-          ),
-        ),
-        body: pages[_selectedIndex],
-        bottomNavigationBar: Container(
-          decoration: BoxDecoration(
-            gradient: const LinearGradient(
-              colors: [Colors.black87, Colors.red],
-              begin: Alignment.bottomLeft,
-              end: Alignment.topRight,
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
+
+  Widget _buildNavItem(IconData icon, String label, int index) {
+    final bool isSelected = _selectedIndex == index;
+    return GestureDetector(
+      onTap: () => _onItemTapped(index),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          AnimatedContainer(
+            duration: const Duration(milliseconds: 300),
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: isSelected ? Colors.white : Colors.transparent,
+              shape: BoxShape.circle,
             ),
-            borderRadius: const BorderRadius.only(
-              topLeft: Radius.circular(25),
-              topRight: Radius.circular(25),
+            child: Icon(
+              icon,
+              color: isSelected ? Colors.red.shade900 : Colors.white70,
             ),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.4),
-                blurRadius: 10,
-                offset: const Offset(0, -2),
-              ),
-            ],
           ),
-          child: BottomNavigationBar(
-            backgroundColor: Colors.transparent,
-            elevation: 0,
-            currentIndex: _selectedIndex,
-            selectedItemColor: Colors.white,
-            unselectedItemColor: Colors.white70,
-            type: BottomNavigationBarType.fixed,
-            onTap: (i) => setState(() => _selectedIndex = i),
-            items: const [
-              BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
-              BottomNavigationBarItem(
-                  icon: Icon(Icons.bloodtype), label: "Compatibility"),
-              BottomNavigationBarItem(
-                  icon: Icon(Icons.people), label: "Donors"),
-              BottomNavigationBarItem(
-                  icon: Icon(Icons.person), label: "Profile"),
-            ],
+          Text(
+            label,
+            style: TextStyle(
+              color: isSelected ? Colors.white : Colors.white70,
+              fontSize: 12,
+            ),
           ),
-        ),
+        ],
       ),
     );
   }
 
-  ListTile _buildDrawerItem(IconData icon, String title, VoidCallback onTap) {
-    return ListTile(
-      leading: Icon(icon, color: Colors.white),
-      title: Text(title, style: const TextStyle(color: Colors.white)),
-      onTap: onTap,
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      drawer: Drawer(
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: [
+            DrawerHeader(
+              decoration: BoxDecoration(color: Colors.red.shade900),
+              child: const Text(
+                "Menu",
+                style: TextStyle(color: Colors.white, fontSize: 24),
+              ),
+            ),
+            ListTile(
+              leading: const Icon(Icons.home),
+              title: const Text("Home"),
+              onTap: () {
+                _onItemTapped(0);
+                Navigator.pop(context);
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.person),
+              title: const Text("Profile"),
+              onTap: () {
+                _onItemTapped(1);
+                Navigator.pop(context);
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.history),
+              title: const Text("History"),
+              onTap: () {
+                _onItemTapped(2);
+                Navigator.pop(context);
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.admin_panel_settings),
+              title: const Text("Admin Panel"),
+              onTap: () {
+                _onItemTapped(3);
+                Navigator.pop(context);
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.settings),
+              title: const Text("Settings"),
+              onTap: () {
+                _onItemTapped(4);
+                Navigator.pop(context);
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.emoji_events),
+              title: const Text("Gamification"),
+              onTap: () {
+                _onItemTapped(5);
+                Navigator.pop(context);
+              },
+            ),
+          ],
+        ),
+      ),
+      appBar: AppBar(
+        backgroundColor: Colors.red.shade900,
+        title: const Text(
+          "Scan My Blood",
+          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
+        ),
+        elevation: 6,
+        iconTheme: const IconThemeData(color: Colors.white),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.brightness_6, color: Colors.white),
+            onPressed: () {
+              widget.toggleTheme();
+              setState(() {});
+            },
+          ),
+          IconButton(
+            icon: const Icon(Icons.language, color: Colors.white),
+            onPressed: () {
+              widget.toggleLanguage();
+              setState(() {});
+            },
+          ),
+          IconButton(
+            icon: const Icon(Icons.emoji_events, color: Colors.white),
+            onPressed: () {
+              _onItemTapped(5); // <-- switch to gamification page
+            },
+          ),
+        ],
+      ),
+      body: _pages[_selectedIndex],
+      bottomNavigationBar: Container(
+        padding: const EdgeInsets.symmetric(vertical: 8),
+        decoration: BoxDecoration(
+          color: Colors.red.shade900,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.3),
+              blurRadius: 8,
+              offset: const Offset(0, -2),
+            ),
+          ],
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: [
+            _buildNavItem(Icons.home, "Home", 0),
+            _buildNavItem(Icons.person, "Profile", 1),
+            _buildNavItem(Icons.history, "History", 2),
+            _buildNavItem(Icons.admin_panel_settings, "Admin", 3),
+          ],
+        ),
+      ),
     );
   }
 }
