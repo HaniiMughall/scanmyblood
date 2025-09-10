@@ -119,7 +119,10 @@ class _ProfilePageState extends State<ProfilePage>
                             ? Text(
                                 _user!.name.isNotEmpty ? _user!.name[0] : 'U',
                                 style: const TextStyle(
-                                    fontSize: 40, fontWeight: FontWeight.bold),
+                                  fontSize: 40,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.red, // default alphabet red
+                                ),
                               )
                             : null,
                       ),
@@ -186,7 +189,10 @@ class _ProfilePageState extends State<ProfilePage>
                             child: const Text(
                               "Edit Profile",
                               style: TextStyle(
-                                  fontSize: 16, fontWeight: FontWeight.bold),
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white, // text white
+                              ),
                             ),
                           ),
                         ],
@@ -221,7 +227,10 @@ class _ProfilePageState extends State<ProfilePage>
                                     borderRadius: BorderRadius.circular(30),
                                   ),
                                 ),
-                                child: const Text("Cancel"),
+                                child: const Text(
+                                  "Cancel",
+                                  style: TextStyle(color: Colors.white), // text white
+                                ),
                               ),
                               const SizedBox(width: 16),
                               ElevatedButton(
@@ -232,7 +241,10 @@ class _ProfilePageState extends State<ProfilePage>
                                     borderRadius: BorderRadius.circular(30),
                                   ),
                                 ),
-                                child: const Text("Save"),
+                                child: const Text(
+                                  "Save",
+                                  style: TextStyle(color: Colors.white), // text white
+                                ),
                               ),
                             ],
                           )
