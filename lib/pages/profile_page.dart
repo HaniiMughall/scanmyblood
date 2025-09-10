@@ -1,7 +1,9 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:scanmyblood/models/user.dart';
 import 'package:scanmyblood/services/database_service.dart';
+import 'package:image_picker/image_picker.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -18,6 +20,8 @@ class _ProfilePageState extends State<ProfilePage>
   final _blood = TextEditingController();
   final _contact = TextEditingController();
 
+  File? _profileImage;
+
   late AnimationController _controller;
   late Animation<double> _fadeIn;
 
@@ -26,8 +30,8 @@ class _ProfilePageState extends State<ProfilePage>
     super.initState();
     _loadUser();
 
-    _controller =
-        AnimationController(vsync: this, duration: const Duration(milliseconds: 800));
+    _controller = AnimationController(
+        vsync: this, duration: const Duration(milliseconds: 800));
     _fadeIn = CurvedAnimation(parent: _controller, curve: Curves.easeIn);
     _controller.forward();
   }
@@ -56,6 +60,17 @@ class _ProfilePageState extends State<ProfilePage>
     ScaffoldMessenger.of(context)
         .showSnackBar(const SnackBar(content: Text("Profile updated")));
     setState(() => _editing = false);
+  }
+
+  Future<void> _pickImage() async {
+    final picker = ImagePicker();
+    final picked =
+        await picker.pickImage(source: ImageSource.gallery, imageQuality: 70);
+    if (picked != null) {
+      setState(() {
+        _profileImage = File(picked.path);
+      });
+    }
   }
 
   @override
@@ -98,29 +113,30 @@ class _ProfilePageState extends State<ProfilePage>
                       CircleAvatar(
                         radius: 55,
                         backgroundColor: Colors.white,
-                        child: Text(
-                          _user!.name.isNotEmpty ? _user!.name[0] : 'U',
-                          style: const TextStyle(
-                              fontSize: 40, fontWeight: FontWeight.bold),
-                        ),
+                        backgroundImage:
+                            _profileImage != null ? FileImage(_profileImage!) : null,
+                        child: _profileImage == null
+                            ? Text(
+                                _user!.name.isNotEmpty ? _user!.name[0] : 'U',
+                                style: const TextStyle(
+                                    fontSize: 40, fontWeight: FontWeight.bold),
+                              )
+                            : null,
                       ),
                       Positioned(
                         bottom: 0,
                         right: 0,
                         child: GestureDetector(
-                          onTap: () {
-                            // TODO: add image picker functionality here
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                  content:
-                                      Text("Profile picture edit coming soon")),
-                            );
-                          },
-                          child: CircleAvatar(
-                            backgroundColor: Colors.white,
-                            radius: 20,
+                          onTap: _pickImage,
+                          child: Container(
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              border: Border.all(color: Colors.red, width: 2),
+                              color: Colors.white,
+                            ),
+                            padding: const EdgeInsets.all(5),
                             child: const Icon(Icons.camera_alt,
-                                color: Colors.red),
+                                color: Colors.red, size: 20),
                           ),
                         ),
                       )
