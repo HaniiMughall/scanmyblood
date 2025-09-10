@@ -119,10 +119,9 @@ class _ProfilePageState extends State<ProfilePage>
                             ? Text(
                                 _user!.name.isNotEmpty ? _user!.name[0] : 'U',
                                 style: const TextStyle(
-                                  fontSize: 40,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.red, // default alphabet red
-                                ),
+                                    fontSize: 40,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.red), // default letter red
                               )
                             : null,
                       ),
@@ -145,7 +144,7 @@ class _ProfilePageState extends State<ProfilePage>
                       )
                     ],
                   ),
-                  const SizedBox(height: 10),
+                  const SizedBox(height: 12),
                   Text(
                     _user!.name,
                     style: const TextStyle(
@@ -153,6 +152,7 @@ class _ProfilePageState extends State<ProfilePage>
                         fontSize: 22,
                         fontWeight: FontWeight.bold),
                   ),
+                  const SizedBox(height: 4),
                   Text(
                     _user!.email,
                     style: const TextStyle(color: Colors.white70, fontSize: 14),
@@ -167,14 +167,15 @@ class _ProfilePageState extends State<ProfilePage>
                 duration: const Duration(milliseconds: 400),
                 child: !_editing
                     ? ListView(
-                        padding: const EdgeInsets.all(20),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 16, vertical: 20),
                         children: [
                           _buildInfoCard(Icons.bloodtype, "Blood Group",
                               _user!.bloodGroup ?? "N/A"),
                           const SizedBox(height: 12),
                           _buildInfoCard(
                               Icons.phone, "Contact", _user!.contact ?? "N/A"),
-                          const SizedBox(height: 20),
+                          const SizedBox(height: 30),
                           ElevatedButton(
                             style: ElevatedButton.styleFrom(
                               backgroundColor: const Color(0xFFe52d27),
@@ -189,16 +190,16 @@ class _ProfilePageState extends State<ProfilePage>
                             child: const Text(
                               "Edit Profile",
                               style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.white, // text white
-                              ),
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white),
                             ),
                           ),
                         ],
                       )
                     : ListView(
-                        padding: const EdgeInsets.all(20),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 16, vertical: 20),
                         children: [
                           TextField(
                               controller: _name,
@@ -214,36 +215,44 @@ class _ProfilePageState extends State<ProfilePage>
                               controller: _contact,
                               decoration:
                                   const InputDecoration(labelText: "Contact")),
-                          const SizedBox(height: 20),
+                          const SizedBox(height: 30),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              ElevatedButton(
-                                onPressed: () =>
-                                    setState(() => _editing = false),
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.grey,
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(30),
+                              Expanded(
+                                child: ElevatedButton(
+                                  onPressed: () =>
+                                      setState(() => _editing = false),
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.grey,
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(30),
+                                    ),
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 14),
                                   ),
-                                ),
-                                child: const Text(
-                                  "Cancel",
-                                  style: TextStyle(color: Colors.white), // text white
+                                  child: const Text(
+                                    "Cancel",
+                                    style: TextStyle(color: Colors.white),
+                                  ),
                                 ),
                               ),
                               const SizedBox(width: 16),
-                              ElevatedButton(
-                                onPressed: _save,
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: const Color(0xFFe52d27),
-                                  shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(30),
+                              Expanded(
+                                child: ElevatedButton(
+                                  onPressed: _save,
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Color(0xFFe52d27),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(30),
+                                    ),
+                                    padding: const EdgeInsets.symmetric(
+                                        vertical: 14),
                                   ),
-                                ),
-                                child: const Text(
-                                  "Save",
-                                  style: TextStyle(color: Colors.white), // text white
+                                  child: const Text(
+                                    "Save",
+                                    style: TextStyle(color: Colors.white),
+                                  ),
                                 ),
                               ),
                             ],
@@ -260,12 +269,18 @@ class _ProfilePageState extends State<ProfilePage>
 
   Widget _buildInfoCard(IconData icon, String title, String value) {
     return Card(
+      margin: const EdgeInsets.symmetric(vertical: 6, horizontal: 4),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-      elevation: 3,
+      elevation: 2,
       child: ListTile(
         leading: Icon(icon, color: Colors.red),
-        title: Text(title),
-        subtitle: Text(value),
+        title: Text(title,
+            style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 15)),
+        subtitle: Padding(
+          padding: const EdgeInsets.only(top: 4),
+          child: Text(value,
+              style: const TextStyle(fontSize: 14, color: Colors.black87)),
+        ),
       ),
     );
   }
