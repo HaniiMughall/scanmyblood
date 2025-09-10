@@ -19,6 +19,7 @@ class _ProfilePageState extends State<ProfilePage>
   final _name = TextEditingController();
   final _blood = TextEditingController();
   final _contact = TextEditingController();
+  final _about = TextEditingController();
 
   File? _profileImage;
 
@@ -47,6 +48,7 @@ class _ProfilePageState extends State<ProfilePage>
         _name.text = u.name;
         _blood.text = u.bloodGroup ?? '';
         _contact.text = u.contact ?? '';
+        _about.text = u.about ?? ''; // new about field
       }
     });
   }
@@ -56,6 +58,7 @@ class _ProfilePageState extends State<ProfilePage>
     _user!.name = _name.text.trim();
     _user!.bloodGroup = _blood.text.trim().isEmpty ? null : _blood.text.trim();
     _user!.contact = _contact.text.trim().isEmpty ? null : _contact.text.trim();
+    _user!.about = _about.text.trim().isEmpty ? null : _about.text.trim();
     await DatabaseService.instance.addUser(_user!);
     ScaffoldMessenger.of(context)
         .showSnackBar(const SnackBar(content: Text("Profile updated")));
@@ -78,6 +81,7 @@ class _ProfilePageState extends State<ProfilePage>
     _name.dispose();
     _blood.dispose();
     _contact.dispose();
+    _about.dispose();
     _controller.dispose();
     super.dispose();
   }
@@ -94,7 +98,7 @@ class _ProfilePageState extends State<ProfilePage>
           children: [
             // Header with gradient and profile picture
             Container(
-              height: 230,
+              height: 220,
               width: double.infinity,
               decoration: const BoxDecoration(
                 gradient: LinearGradient(
@@ -121,7 +125,7 @@ class _ProfilePageState extends State<ProfilePage>
                                 style: const TextStyle(
                                     fontSize: 40,
                                     fontWeight: FontWeight.bold,
-                                    color: Colors.red), // default letter red
+                                    color: Colors.red),
                               )
                             : null,
                       ),
@@ -157,6 +161,17 @@ class _ProfilePageState extends State<ProfilePage>
                     _user!.email,
                     style: const TextStyle(color: Colors.white70, fontSize: 14),
                   ),
+                  const SizedBox(height: 4),
+                  Text(
+                    _user!.about?.isNotEmpty == true
+                        ? _user!.about!
+                        : "Hey there! I am using this app.",
+                    style: const TextStyle(
+                        color: Colors.white70,
+                        fontSize: 13,
+                        fontStyle: FontStyle.italic),
+                    textAlign: TextAlign.center,
+                  ),
                 ],
               ),
             ),
@@ -175,6 +190,9 @@ class _ProfilePageState extends State<ProfilePage>
                           const SizedBox(height: 12),
                           _buildInfoCard(
                               Icons.phone, "Contact", _user!.contact ?? "N/A"),
+                          const SizedBox(height: 12),
+                          _buildInfoCard(Icons.info_outline, "About",
+                              _user!.about ?? "Hey there! I am using this app."),
                           const SizedBox(height: 30),
                           ElevatedButton(
                             style: ElevatedButton.styleFrom(
@@ -215,6 +233,11 @@ class _ProfilePageState extends State<ProfilePage>
                               controller: _contact,
                               decoration:
                                   const InputDecoration(labelText: "Contact")),
+                          const SizedBox(height: 12),
+                          TextField(
+                              controller: _about,
+                              decoration: const InputDecoration(
+                                  labelText: "About")),
                           const SizedBox(height: 30),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.center,

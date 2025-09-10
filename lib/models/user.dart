@@ -24,6 +24,9 @@ class User extends HiveObject {
   @HiveField(6)
   final String role; // "user" ya "admin"
 
+  @HiveField(7)
+  String? about; // ✅ new field for user "About" section
+
   User({
     required this.id,
     required this.name,
@@ -32,5 +35,6 @@ class User extends HiveObject {
     this.bloodGroup,
     this.contact,
     required this.role,
+    this.about, // ✅ include in constructor
   });
 }
