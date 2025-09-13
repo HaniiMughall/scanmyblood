@@ -28,7 +28,7 @@ class _MainPageState extends State<MainPage> {
   int _selectedIndex = 0;
 
   late final List<Widget> _pages = [
-    const HomePage(),
+     HomePage(),
     const ProfilePage(),
     const HistoryPage(),
     const AdminPanelPage(),
