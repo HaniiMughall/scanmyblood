@@ -1,4 +1,3 @@
-// verify_donation_page.dart
 import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
 import '/gamification/providers/gamification_provider.dart';
@@ -7,7 +6,6 @@ import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import '/utils/global_data.dart';
 import '/models/donor.dart';
-import 'dart:ui';
 
 class VerifyDonationPage extends StatefulWidget {
   const VerifyDonationPage({super.key});
@@ -56,23 +54,6 @@ class _VerifyDonationPageState extends State<VerifyDonationPage> {
           : "Anonymous Donor",
     );
 
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text("🎉 Congratulations!"),
-        content: const Text(
-            "You have completed your first donation!\n\n+50 Points Earned\n🏅 Badge Unlocked"),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.pop(context);
-              Navigator.pop(context);
-            },
-            child: const Text("OK"),
-          ),
-        ],
-      ),
-    );
     if (_formKey.currentState!.validate() && otpVerified) {
       final newDonor = Donor(
         id: Uuid().v4(),
@@ -115,104 +96,107 @@ class _VerifyDonationPageState extends State<VerifyDonationPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      extendBodyBehindAppBar: true,
       appBar: AppBar(
-          title: const Text("Verify Donation"),
-          backgroundColor: Colors.transparent,
-          elevation: 0,
-          flexibleSpace: Container(
-              decoration: const BoxDecoration(
-                  gradient:
-                      LinearGradient(colors: [Colors.red, Colors.black87])))),
+        title: const Text(
+          "Verify Donation",
+          style: TextStyle(
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        backgroundColor: Colors.red.shade900,
+        elevation: 8,
+        shadowColor: Colors.black.withOpacity(0.4),
+        iconTheme:
+            const IconThemeData(color: Colors.white), // back button white
+        centerTitle: true,
+      ),
       body: Container(
-        decoration: const BoxDecoration(
-            gradient: LinearGradient(colors: [Colors.black87, Colors.red])),
+        color: Colors.grey[100], // light background for contrast
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(16),
           child: Center(
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(20),
-              child: BackdropFilter(
-                filter: ImageFilter.blur(sigmaX: 12, sigmaY: 12),
-                child: Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.06),
-                    borderRadius: BorderRadius.circular(20),
-                    border: Border.all(color: Colors.white24),
-                  ),
-                  child: Form(
-                    key: _formKey,
-                    child: Column(
+            child: Container(
+              width: 360, // ✅ fixed width box (not full page)
+              padding: const EdgeInsets.all(20),
+              decoration: BoxDecoration(
+                color: Colors.white, // ✅ white box
+                borderRadius: BorderRadius.circular(20),
+                boxShadow: [
+                  BoxShadow(
+                      color: Colors.black.withOpacity(0.1),
+                      blurRadius: 8,
+                      offset: const Offset(0, 4))
+                ],
+              ),
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  children: [
+                    _buildField(
+                        controller: _nameController,
+                        label: "Full Name",
+                        validatorMsg: "Enter your name"),
+                    const SizedBox(height: 12),
+                    _buildField(
+                        controller: _bloodGroupController,
+                        label: "Blood Group",
+                        validatorMsg: "Enter blood group"),
+                    const SizedBox(height: 12),
+                    _buildField(
+                        controller: _cityController,
+                        label: "City",
+                        validatorMsg: "Enter city"),
+                    const SizedBox(height: 12),
+                    _buildField(
+                        controller: _contactController,
+                        label: "Contact Number",
+                        validatorMsg: "Enter contact"),
+                    const SizedBox(height: 12),
+                    _proofImage == null
+                        ? TextButton.icon(
+                            onPressed: _pickImage,
+                            icon:
+                                const Icon(Icons.image, color: Colors.black87),
+                            label: const Text("Upload Proof Image (Optional)",
+                                style: TextStyle(color: Colors.black87)),
+                          )
+                        : Image.file(_proofImage!, height: 150),
+                    const SizedBox(height: 12),
+                    Row(
                       children: [
-                        _glassField(
-                            controller: _nameController,
-                            label: "Full Name",
-                            validatorMsg: "Enter your name"),
-                        const SizedBox(height: 12),
-                        _glassField(
-                            controller: _bloodGroupController,
-                            label: "Blood Group",
-                            validatorMsg: "Enter blood group"),
-                        const SizedBox(height: 12),
-                        _glassField(
-                            controller: _cityController,
-                            label: "City",
-                            validatorMsg: "Enter city"),
-                        const SizedBox(height: 12),
-                        _glassField(
-                            controller: _contactController,
-                            label: "Contact Number",
-                            validatorMsg: "Enter contact"),
-                        const SizedBox(height: 12),
-                        _proofImage == null
-                            ? TextButton.icon(
-                                onPressed: _pickImage,
-                                icon: const Icon(Icons.image,
-                                    color: Colors.white),
-                                label: const Text(
-                                    "Upload Proof Image (Optional)",
-                                    style: TextStyle(color: Colors.white)),
-                              )
-                            : Image.file(_proofImage!, height: 150),
-                        const SizedBox(height: 12),
-                        Row(
-                          children: [
-                            Expanded(
-                              child: _glassField(
-                                  controller: _otpController,
-                                  label: "Enter OTP",
-                                  validatorMsg: ""),
-                            ),
-                            const SizedBox(width: 8),
-                            ElevatedButton(
-                              onPressed: _verifyOtp,
-                              style: ElevatedButton.styleFrom(
-                                  backgroundColor: Colors.red,
-                                  shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(12))),
-                              child: const Text("Verify"),
-                            ),
-                          ],
+                        Expanded(
+                          child: _buildField(
+                              controller: _otpController,
+                              label: "Enter OTP",
+                              validatorMsg: ""),
                         ),
-                        const SizedBox(height: 18),
-                        ElevatedButton.icon(
-                          onPressed: _confirmDonation,
-                          icon: const Icon(Icons.check_circle),
-                          label: const Text("Yes, I Donated"),
+                        const SizedBox(width: 8),
+                        ElevatedButton(
+                          onPressed: _verifyOtp,
                           style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.red,
-                            foregroundColor: Colors.white,
-                            padding: const EdgeInsets.symmetric(
-                                vertical: 12, horizontal: 20),
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(14)),
-                          ),
+                              backgroundColor: Colors.red,
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(12))),
+                          child: const Text("Verify"),
                         ),
                       ],
                     ),
-                  ),
+                    const SizedBox(height: 18),
+                    ElevatedButton.icon(
+                      onPressed: _confirmDonation,
+                      icon: const Icon(Icons.check_circle),
+                      label: const Text("Yes, I Donated"),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.red.shade900,
+                        foregroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 12, horizontal: 20),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(14)),
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ),
@@ -222,21 +206,20 @@ class _VerifyDonationPageState extends State<VerifyDonationPage> {
     );
   }
 
-  Widget _glassField(
+  Widget _buildField(
       {required TextEditingController controller,
       required String label,
       required String validatorMsg}) {
     return TextFormField(
       controller: controller,
-      style: const TextStyle(color: Colors.white),
       validator: (v) => validatorMsg.isEmpty
           ? null
           : (v == null || v.trim().isEmpty ? validatorMsg : null),
       decoration: InputDecoration(
         labelText: label,
-        labelStyle: const TextStyle(color: Colors.white70),
+        labelStyle: const TextStyle(color: Colors.black87),
         filled: true,
-        fillColor: Colors.white.withOpacity(0.04),
+        fillColor: Colors.grey[100],
         border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12),
             borderSide: BorderSide.none),

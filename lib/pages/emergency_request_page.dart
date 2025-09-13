@@ -1,11 +1,10 @@
-// emergency_request_page.dart
 import 'package:flutter/material.dart';
-import '../../services/notification_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../../services/notification_service.dart';
 import '../../models/blood_request.dart';
 import '../../services/database_service.dart';
 import 'package:uuid/uuid.dart';
-import 'dart:ui';
+import '/widgets/theme_page.dart';
 
 class EmergencyRequestPage extends StatefulWidget {
   const EmergencyRequestPage({super.key});
@@ -38,7 +37,8 @@ class _EmergencyRequestPageState extends State<EmergencyRequestPage> {
   Future<void> _submitRequest() async {
     if (_city.text.trim().isEmpty || _group.text.trim().isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text("Enter city & blood group")));
+        const SnackBar(content: Text("Enter city & blood group")),
+      );
       return;
     }
 
@@ -66,14 +66,15 @@ class _EmergencyRequestPageState extends State<EmergencyRequestPage> {
 
     setState(() => _submitting = false);
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-            "Emergency sent to nearby ${request.bloodGroup} donors in ${request.city}"),
-      ),
-    );
-
-    Navigator.pop(context);
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+              "Emergency sent to nearby ${request.bloodGroup} donors in ${request.city}"),
+        ),
+      );
+      Navigator.pop(context);
+    }
   }
 
   @override
@@ -86,100 +87,84 @@ class _EmergencyRequestPageState extends State<EmergencyRequestPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      extendBodyBehindAppBar: true,
-      appBar: AppBar(
-          title: const Text("Emergency Request"),
-          backgroundColor: Colors.transparent,
-          elevation: 0,
-          flexibleSpace: Container(
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(colors: [Colors.red, Colors.black87]),
-            ),
-          )),
-      body: Container(
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(colors: [Colors.black87, Colors.red]),
-        ),
-        child: Center(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 18.0, vertical: 24),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(22),
-              child: BackdropFilter(
-                filter: ImageFilter.blur(sigmaX: 14, sigmaY: 14),
-                child: Container(
-                  padding: const EdgeInsets.all(18),
-                  decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.06),
-                    borderRadius: BorderRadius.circular(22),
-                    border: Border.all(color: Colors.white24),
-                  ),
-                  child: SingleChildScrollView(
-                    child: Column(
-                      children: [
-                        const Text(
-                          "Enter details to notify nearby donors immediately.",
-                          style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w600,
-                              color: Colors.white),
-                          textAlign: TextAlign.center,
-                        ),
-                        const SizedBox(height: 18),
-                        _glassTextField(
-                            controller: _city, label: "City / Location"),
-                        const SizedBox(height: 12),
-                        _glassTextField(
-                            controller: _group,
-                            label: "Required Blood Group (e.g., O+, A-)"),
-                        const SizedBox(height: 12),
-                        _glassTextField(
-                            controller: _contact,
-                            label: "Contact number (optional)",
-                            keyboardType: TextInputType.phone),
-                        const SizedBox(height: 18),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Switch(
-                              value: _notificationsEnabled,
-                              activeColor: Colors.red,
-                              onChanged: (v) async {
-                                final prefs =
-                                    await SharedPreferences.getInstance();
-                                await prefs.setBool('notifications', v);
-                                setState(() => _notificationsEnabled = v);
-                              },
-                            ),
-                            const SizedBox(width: 8),
-                            const Text("Notify nearby donors",
-                                style: TextStyle(color: Colors.white70)),
-                          ],
-                        ),
-                        const SizedBox(height: 12),
-                        SizedBox(
-                          width: double.infinity,
-                          child: ElevatedButton.icon(
-                            onPressed: _submitting ? null : _submitRequest,
-                            icon: const Icon(Icons.notifications_active),
-                            label: _submitting
-                                ? const Text("Notifying...")
-                                : const Text("Notify Nearby Donors"),
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.red,
-                              padding: const EdgeInsets.symmetric(vertical: 14),
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(14)),
-                              elevation: 8,
-                            ),
-                          ),
-                        ),
-                      ],
+    return ThemedPage(
+      title: "Emergency Request",
+      child: Center(
+        child: Container(
+          padding: const EdgeInsets.all(20),
+          margin: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(18),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black26,
+                blurRadius: 8,
+                offset: const Offset(0, 4),
+              )
+            ],
+          ),
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                const Text(
+                  "Enter details to notify nearby donors immediately.",
+                  style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.black87),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 18),
+                _textField(controller: _city, label: "City / Location"),
+                const SizedBox(height: 12),
+                _textField(
+                    controller: _group,
+                    label: "Required Blood Group (e.g., O+, A-)"),
+                const SizedBox(height: 12),
+                _textField(
+                  controller: _contact,
+                  label: "Contact number (optional)",
+                  keyboardType: TextInputType.phone,
+                ),
+                const SizedBox(height: 18),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Switch(
+                      value: _notificationsEnabled,
+                      activeColor: Colors.red.shade900,
+                      onChanged: (v) async {
+                        final prefs = await SharedPreferences.getInstance();
+                        await prefs.setBool('notifications', v);
+                        setState(() => _notificationsEnabled = v);
+                      },
+                    ),
+                    const SizedBox(width: 8),
+                    const Text("Notify nearby donors",
+                        style: TextStyle(color: Colors.black87)),
+                  ],
+                ),
+                const SizedBox(height: 16),
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton.icon(
+                    onPressed: _submitting ? null : _submitRequest,
+                    icon: const Icon(Icons.notifications_active),
+                    label: _submitting
+                        ? const Text("Notifying...")
+                        : const Text("Notify Nearby Donors"),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.red.shade900,
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(vertical: 14),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12)),
+                      elevation: 6,
                     ),
                   ),
                 ),
-              ),
+              ],
             ),
           ),
         ),
@@ -187,24 +172,17 @@ class _EmergencyRequestPageState extends State<EmergencyRequestPage> {
     );
   }
 
-  Widget _glassTextField(
-      {required TextEditingController controller,
-      required String label,
-      TextInputType keyboardType = TextInputType.text}) {
+  Widget _textField({
+    required TextEditingController controller,
+    required String label,
+    TextInputType keyboardType = TextInputType.text,
+  }) {
     return TextField(
       controller: controller,
       keyboardType: keyboardType,
-      style: const TextStyle(color: Colors.white),
       decoration: InputDecoration(
         labelText: label,
-        labelStyle: const TextStyle(color: Colors.white70),
-        filled: true,
-        fillColor: Colors.white.withOpacity(0.04),
-        border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(14),
-            borderSide: BorderSide.none),
-        contentPadding:
-            const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
       ),
     );
   }

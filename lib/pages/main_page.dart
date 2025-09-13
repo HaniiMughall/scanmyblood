@@ -4,7 +4,11 @@ import '/gamification/screens/gamification_screen.dart';
 import 'profile_page.dart';
 import 'history_page.dart';
 import 'admin_panel_page.dart';
+import 'package:provider/provider.dart';
+import '/gamification/providers/gamification_provider.dart';
 import 'setting_page.dart';
+import '/gamification/models/achievement.dart';
+import '/gamification/services/gamification_service.dart';
 
 class MainPage extends StatefulWidget {
   final VoidCallback toggleTheme;
@@ -33,7 +37,31 @@ class _MainPageState extends State<MainPage> {
     const HistoryPage(),
     const AdminPanelPage(),
     const SettingsPage(),
-    const GamificationScreen(), // <-- add gamification as a main page
+    ChangeNotifierProvider(
+      create: (_) => GamificationProvider(
+        service: GamificationService(),
+        achievementsDefinition: [
+          Achievement(
+            id: "first_donation",
+            title: "First Donation",
+            description: "Awarded when you make your first blood donation",
+            pointsReward: 100,
+            target: 1,
+            oneTime: true,
+          ),
+          Achievement(
+            id: "streak_7",
+            title: "1 Week Streak",
+            description: "Donated or engaged 7 days in a row",
+            pointsReward: 200,
+            target: 7,
+            oneTime: true,
+          ),
+          // 👉 aur bhi achievements add kar sakte ho
+        ],
+      ),
+      child: const GamificationScreen(),
+    ),
   ];
 
   void _onItemTapped(int index) {
