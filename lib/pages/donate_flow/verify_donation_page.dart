@@ -56,12 +56,12 @@ class _VerifyDonationPageState extends State<VerifyDonationPage> {
 
     if (_formKey.currentState!.validate() && otpVerified) {
       final newDonor = Donor(
-        id: Uuid().v4(),
+        id: const Uuid().v4(),
         name: _nameController.text.trim(),
         bloodGroup: _bloodGroupController.text.trim(),
         city: _cityController.text.trim(),
         contact: _contactController.text.trim(),
-        verified: false,
+        verified: true,
         points: 50,
         badge: "🏅 Bronze Donor",
       );
@@ -107,20 +107,19 @@ class _VerifyDonationPageState extends State<VerifyDonationPage> {
         backgroundColor: Colors.red.shade900,
         elevation: 8,
         shadowColor: Colors.black.withOpacity(0.4),
-        iconTheme:
-            const IconThemeData(color: Colors.white), // back button white
+        iconTheme: const IconThemeData(color: Colors.white),
         centerTitle: true,
       ),
       body: Container(
-        color: Colors.grey[100], // light background for contrast
+        color: Colors.grey[100],
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(16),
           child: Center(
             child: Container(
-              width: 360, // ✅ fixed width box (not full page)
+              width: 360,
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
-                color: Colors.white, // ✅ white box
+                color: Colors.white,
                 borderRadius: BorderRadius.circular(20),
                 boxShadow: [
                   BoxShadow(
@@ -138,10 +137,30 @@ class _VerifyDonationPageState extends State<VerifyDonationPage> {
                         label: "Full Name",
                         validatorMsg: "Enter your name"),
                     const SizedBox(height: 12),
-                    _buildField(
-                        controller: _bloodGroupController,
-                        label: "Blood Group",
-                        validatorMsg: "Enter blood group"),
+                    DropdownButtonFormField<String>(
+                      value: null,
+                      decoration: InputDecoration(
+                        labelText: "Blood Group",
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(12),
+                          borderSide: BorderSide.none,
+                        ),
+                        filled: true,
+                        fillColor: Colors.grey[100],
+                      ),
+                      items: ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"]
+                          .map((bg) => DropdownMenuItem(
+                                value: bg,
+                                child: Text(bg),
+                              ))
+                          .toList(),
+                      onChanged: (val) {
+                        _bloodGroupController.text = val ?? "";
+                      },
+                      validator: (val) => val == null || val.isEmpty
+                          ? "Select blood group"
+                          : null,
+                    ),
                     const SizedBox(height: 12),
                     _buildField(
                         controller: _cityController,
@@ -184,11 +203,13 @@ class _VerifyDonationPageState extends State<VerifyDonationPage> {
                     ),
                     const SizedBox(height: 18),
                     ElevatedButton.icon(
-                      onPressed: _confirmDonation,
+                      onPressed: otpVerified ? _confirmDonation : null,
                       icon: const Icon(Icons.check_circle),
                       label: const Text("Yes, I Donated"),
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.red.shade900,
+                        backgroundColor: otpVerified
+                            ? Colors.red.shade900
+                            : Colors.grey, // grey if disabled
                         foregroundColor: Colors.white,
                         padding: const EdgeInsets.symmetric(
                             vertical: 12, horizontal: 20),
