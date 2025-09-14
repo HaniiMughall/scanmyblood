@@ -13,18 +13,18 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
   final List<Map<String, String>> _onboardingData = [
     {
-      "title": "Welcome to Scan my Blood App",
+      "title": "Welcome to Scan My Blood",
       "subtitle": "Every 2 seconds, someone needs blood. Be a lifesaver!",
       "image": "assets/lang/logo.png",
     },
     {
-      "title": "Find Blood Easily",
+      "title": "Find Donors Easily",
       "subtitle": "Get instant access to donors nearby with just one tap.",
       "image": "assets/lang/search_donor.png",
     },
     {
-      "title": "Donate & Earn Badges",
-      "subtitle": "Donate blood, save lives, and earn trust badges!",
+      "title": "Donate & Earn Rewards",
+      "subtitle": "Save lives, earn points & unlock donor badges!",
       "image": "assets/lang/badge.png",
     },
   ];
@@ -34,7 +34,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       Navigator.pushReplacementNamed(context, '/main');
     } else {
       _controller.nextPage(
-        duration: const Duration(milliseconds: 400),
+        duration: const Duration(milliseconds: 500),
         curve: Curves.easeInOut,
       );
     }
@@ -64,7 +64,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       body: Container(
         decoration: const BoxDecoration(
           gradient: LinearGradient(
-            colors: [Color(0xFFe52d27), Color(0xFFff512f), Color(0xFFdd2476)],
+            colors: [Color(0xFFe52d27), Color(0xFFff512f)],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
@@ -82,16 +82,16 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                     return Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 24.0),
                       child: Container(
-                        padding: const EdgeInsets.all(22),
+                        padding: const EdgeInsets.all(26),
                         decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.08),
+                          color: Colors.white.withOpacity(0.1),
                           borderRadius: BorderRadius.circular(28),
                           border: Border.all(color: Colors.white24, width: 1),
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.black.withOpacity(0.3),
-                              blurRadius: 12,
-                              offset: const Offset(0, 6),
+                              color: Colors.black.withOpacity(0.25),
+                              blurRadius: 16,
+                              offset: const Offset(0, 8),
                             ),
                           ],
                         ),
@@ -160,7 +160,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                       boxShadow: active
                           ? [
                               BoxShadow(
-                                color: Colors.yellowAccent.withOpacity(0.6),
+                                color: Colors.yellowAccent.withOpacity(0.5),
                                 blurRadius: 8,
                                 spreadRadius: 1,
                               )
@@ -197,26 +197,24 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                       onTap: _nextPage,
                       child: Container(
                         padding: const EdgeInsets.symmetric(
-                            horizontal: 30, vertical: 14),
+                            horizontal: 34, vertical: 14),
                         decoration: BoxDecoration(
-                          gradient: const LinearGradient(
-                            colors: [Color(0xFFff9966), Color(0xFFff5e62)],
-                          ),
+                          color: Colors.white,
                           borderRadius: BorderRadius.circular(30),
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.orangeAccent.withOpacity(0.6),
-                              blurRadius: 12,
-                              offset: Offset(0, 4),
+                              color: Colors.black.withOpacity(0.25),
+                              blurRadius: 10,
+                              offset: const Offset(0, 4),
                             ),
                           ],
                         ),
                         child: Text(
                           isLast ? "Get Started" : "Next",
-                          style: const TextStyle(
+                          style: TextStyle(
                             fontSize: 17,
                             fontWeight: FontWeight.w600,
-                            color: Colors.white,
+                            color: Colors.red.shade900,
                             letterSpacing: 0.5,
                           ),
                         ),

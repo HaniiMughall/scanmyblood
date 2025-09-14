@@ -13,12 +13,15 @@ class HomePage extends StatelessWidget {
       context: context,
       builder: (context) {
         return AlertDialog(
-          backgroundColor: Colors.white,
+          backgroundColor: Theme.of(context).cardColor, // updated
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-          title: const Text(
+          title: Text(
             'Select Your Blood Group',
-            style: TextStyle(fontWeight: FontWeight.bold, color: Colors.red),
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              color: Theme.of(context).colorScheme.primary, // updated
+            ),
           ),
           content: StatefulBuilder(
             builder: (context, setState) {
@@ -41,7 +44,10 @@ class HomePage extends StatelessWidget {
           ),
           actions: [
             TextButton(
-              child: const Text('Next', style: TextStyle(color: Colors.red)),
+              child: Text(
+                'Next',
+                style: TextStyle(color: Theme.of(context).colorScheme.primary),
+              ),
               onPressed: () {
                 Navigator.pop(context);
                 Navigator.push(
@@ -98,12 +104,12 @@ class HomePage extends StatelessWidget {
       child: Center(
         child: ConstrainedBox(
           constraints: const BoxConstraints(
-            maxWidth: 500, // limits the white box width
+            maxWidth: 500, // limits the box width
           ),
           child: Container(
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: Theme.of(context).cardColor, // updated
               borderRadius: BorderRadius.circular(16),
               boxShadow: [
                 BoxShadow(
@@ -116,12 +122,12 @@ class HomePage extends StatelessWidget {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const Text(
+                Text(
                   "Welcome to Scan Blood App",
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
-                    color: Colors.red,
+                    color: Theme.of(context).colorScheme.primary, // updated
                   ),
                 ),
                 const SizedBox(height: 20),

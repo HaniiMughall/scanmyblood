@@ -53,7 +53,7 @@ class _LoginScreenState extends State<LoginScreen> {
     await prefs.setString('logged_in_email', email);
 
     Navigator.pushReplacement(
-        context, MaterialPageRoute(builder: (_) => const OnboardingScreen()));
+        context, MaterialPageRoute(builder: (_) => OnboardingScreen()));
   }
 
   @override

@@ -74,7 +74,7 @@ class _ScanMyBloodAppState extends State<ScanMyBloodApp> {
         "/splash": (_) => const SplashScreen(),
         "/login": (_) => const LoginScreen(),
         "/signup": (_) => const SignUpScreen(),
-        "/onboarding": (_) => const OnboardingScreen(),
+        "/onboarding": (_) => OnboardingScreen(),
         "/main": (_) => MainPage(
               toggleTheme: _toggleTheme,
               toggleLanguage: _toggleLanguage,
