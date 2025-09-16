@@ -15,7 +15,8 @@ class _HistoryPageState extends State<HistoryPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Donation History"),
-        backgroundColor: Colors.red,
+        backgroundColor: Colors.red.shade800,
+        foregroundColor: Colors.white,
       ),
       body: donors.isEmpty
           ? const Center(

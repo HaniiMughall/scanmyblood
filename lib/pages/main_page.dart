@@ -1,14 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
 import 'home_page.dart';
 import '/gamification/screens/gamification_screen.dart';
 import 'profile_page.dart';
 import 'history_page.dart';
 import 'admin_panel_page.dart';
 import 'setting_page.dart';
-import 'package:provider/provider.dart';
-import '/gamification/providers/gamification_provider.dart';
-import 'setting_page.dart';
 import '/gamification/models/achievement.dart';
+import '/gamification/providers/gamification_provider.dart';
 import '/gamification/services/gamification_service.dart';
 
 class MainPage extends StatefulWidget {
@@ -33,7 +33,7 @@ class _MainPageState extends State<MainPage> {
   int _selectedIndex = 0;
 
   late final List<Widget> _pages = [
-    HomePage(),
+    const HomePage(),
     const ProfilePage(),
     const HistoryPage(),
     const AdminPanelPage(),
@@ -155,14 +155,6 @@ class _MainPageState extends State<MainPage> {
                 Navigator.pop(context);
               },
             ),
-            ListTile(
-              leading: const Icon(Icons.emoji_events),
-              title: const Text("Gamification"),
-              onTap: () {
-                _onItemTapped(5);
-                Navigator.pop(context);
-              },
-            ),
           ],
         ),
       ),
@@ -177,22 +169,16 @@ class _MainPageState extends State<MainPage> {
         actions: [
           IconButton(
             icon: const Icon(Icons.brightness_6, color: Colors.white),
-            onPressed: () {
-              widget.toggleTheme();
-              setState(() {});
-            },
+            onPressed: widget.toggleTheme,
           ),
           IconButton(
             icon: const Icon(Icons.language, color: Colors.white),
-            onPressed: () {
-              widget.toggleLanguage();
-              setState(() {});
-            },
+            onPressed: widget.toggleLanguage,
           ),
           IconButton(
             icon: const Icon(Icons.emoji_events, color: Colors.white),
             onPressed: () {
-              _onItemTapped(5); // <-- switch to gamification page
+              _onItemTapped(5);
             },
           ),
         ],

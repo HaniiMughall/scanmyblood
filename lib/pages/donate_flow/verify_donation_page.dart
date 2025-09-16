@@ -155,7 +155,7 @@ class _VerifyDonationPageState extends State<VerifyDonationPage> {
                       filled: true,
                       fillColor: Colors.grey[100],
                     ),
-                    items: ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"]
+                    items: ["A-", "B-", "AB+", "O+", "O-"]
                         .map((bg) =>
                             DropdownMenuItem(value: bg, child: Text(bg)))
                         .toList(),

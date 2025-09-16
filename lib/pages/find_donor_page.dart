@@ -18,17 +18,7 @@ class _FindDonorPageState extends State<FindDonorPage> {
   List<Donor> filteredDonors = [];
   bool loading = true;
 
-  final List<String> groups = [
-    'All',
-    'A+',
-    'A-',
-    'B+',
-    'B-',
-    'AB+',
-    'AB-',
-    'O+',
-    'O-'
-  ];
+  final List<String> groups = ['All', 'A-', 'B-', 'AB+', 'O+', 'O-'];
 
   @override
   void initState() {

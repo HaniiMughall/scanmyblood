@@ -8,12 +8,9 @@ class CompatibilityPage extends StatelessWidget {
   const CompatibilityPage({required this.myGroup, super.key});
 
   final Map<String, List<String>> compatibilityMap = const {
-    "A+": ["A+", "AB+"],
     "A-": ["A+", "A-", "AB+", "AB-"],
-    "B+": ["B+", "AB+"],
     "B-": ["B+", "B-", "AB+", "AB-"],
     "AB+": ["AB+"],
-    "AB-": ["AB+", "AB-"],
     "O+": ["A+", "B+", "AB+", "O+"],
     "O-": ["A+", "B+", "AB+", "O+", "A-", "B-", "AB-", "O-"],
   };

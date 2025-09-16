@@ -31,7 +31,11 @@ class _AdminPanelPageState extends State<AdminPanelPage> {
     final pendingDonors = donors.where((d) => !d.verified).toList();
 
     return Scaffold(
-      appBar: AppBar(title: Text('Admin Panel'), backgroundColor: Colors.red),
+      appBar: AppBar(
+        title: Text('Admin Panel'),
+        backgroundColor: Colors.red.shade800,
+        foregroundColor: Colors.white,
+      ),
       body: ListView(
         children: [
           Padding(

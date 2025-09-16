@@ -8,19 +8,19 @@ class HomePage extends StatelessWidget {
   const HomePage({super.key});
 
   void _showBloodGroupDialog(BuildContext context) {
-    String selectedGroup = 'A+';
+    String selectedGroup = 'A-';
     showDialog(
       context: context,
       builder: (context) {
         return AlertDialog(
-          backgroundColor: Theme.of(context).cardColor, // updated
+          backgroundColor: Theme.of(context).cardColor,
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
           title: Text(
             'Select Your Blood Group',
             style: TextStyle(
+              color: Colors.red.shade900, // ✅ Darker for readability
               fontWeight: FontWeight.bold,
-              color: Theme.of(context).colorScheme.primary, // updated
             ),
           ),
           content: StatefulBuilder(
@@ -28,7 +28,7 @@ class HomePage extends StatelessWidget {
               return DropdownButton<String>(
                 isExpanded: true,
                 value: selectedGroup,
-                items: ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-']
+                items: ['A-', 'B-', 'AB+', 'O+', 'O-']
                     .map((group) => DropdownMenuItem(
                           value: group,
                           child: Text(group),
@@ -46,7 +46,9 @@ class HomePage extends StatelessWidget {
             TextButton(
               child: Text(
                 'Next',
-                style: TextStyle(color: Theme.of(context).colorScheme.primary),
+                style: TextStyle(
+                  color: Colors.red.shade900,
+                ),
               ),
               onPressed: () {
                 Navigator.pop(context);
@@ -103,14 +105,12 @@ class HomePage extends StatelessWidget {
       color: Colors.red.shade900,
       child: Center(
         child: ConstrainedBox(
-          constraints: const BoxConstraints(
-            maxWidth: 500, // limits the box width
-          ),
+          constraints: const BoxConstraints(maxWidth: 500),
           child: Container(
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
-              color: Theme.of(context).cardColor, // updated
-              borderRadius: BorderRadius.circular(16),
+              color: Theme.of(context).cardColor,
+              borderRadius: BorderRadius.circular(18),
               boxShadow: [
                 BoxShadow(
                   color: Colors.black.withOpacity(0.2),
@@ -125,13 +125,12 @@ class HomePage extends StatelessWidget {
                 Text(
                   "Welcome to Scan Blood App",
                   style: TextStyle(
+                    color: Colors.red.shade900,
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
-                    color: Theme.of(context).colorScheme.primary, // updated
                   ),
                 ),
                 const SizedBox(height: 20),
-                // 1st row
                 Row(
                   children: [
                     _buildMenuButton(
@@ -144,12 +143,11 @@ class HomePage extends StatelessWidget {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => FindDonorPage()),
+                            builder: (context) => const FindDonorPage()),
                       );
                     }),
                   ],
                 ),
-                // 2nd row
                 Row(
                   children: [
                     _buildMenuButton(
@@ -157,7 +155,7 @@ class HomePage extends StatelessWidget {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => EmergencyRequestPage()),
+                            builder: (context) => const EmergencyRequestPage()),
                       );
                     }),
                     _buildMenuButton(context, "Mark as Donated", Icons.verified,

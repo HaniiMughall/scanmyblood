@@ -30,6 +30,7 @@ void main() async {
   await Hive.openBox<Donor>("donors");
   await Hive.openBox<BloodRequest>("requests");
   await Hive.openBox("pending"); // generic box
+  await Hive.openBox("authBox"); // ✅ to store login state
 
   runApp(const ScanMyBloodApp());
 }
@@ -74,7 +75,7 @@ class _ScanMyBloodAppState extends State<ScanMyBloodApp> {
         "/splash": (_) => const SplashScreen(),
         "/login": (_) => const LoginScreen(),
         "/signup": (_) => const SignUpScreen(),
-        "/onboarding": (_) => OnboardingScreen(),
+        "/onboarding": (_) => const OnboardingScreen(),
         "/main": (_) => MainPage(
               toggleTheme: _toggleTheme,
               toggleLanguage: _toggleLanguage,
